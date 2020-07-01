@@ -33,35 +33,25 @@ class PlasmaParameters():
         self.electricField = electricField
 
 
-    @property
-    def Debye_length(self):
+        self.compute_properties()
+
+    def compute_properties(self):
+        """the properties of the plasma should not evolves, so they can all be computed"""
 
         Te_k = self.electronTemperature.to(u.K, equivalencies=u.temperature_energy())
-        return Debye_length(Te_k, self.plasmaDensity)
 
-    @property
-    def ionPlasmaFrequency(self):
-        return plasma_frequency(self.plasmaDensity, self.particle)
+        self.Debye_length =  Debye_length(Te_k, self.plasmaDensity)
 
-    @property
-    def electronPlasmaFrequency(self):
-        return plasma_frequency(self.plasmaDensity)
+        self.ionPlasmaFrequency = plasma_frequency(self.plasmaDensity, self.particle)
 
-    @property
-    def BohmSpeed(self):
-        Te_k = self.electronTemperature.to(u.K, equivalencies=u.temperature_energy())
-        return thermal_speed(Te_k, self.particle)
+        self.electronPlasmaFrequency = plasma_frequency(self.plasmaDensity)
 
-    @property
-    def vti(self):
+        self.BohmSpeed = self.Debye_length * self.ionPlasmaFrequency/u.rad
+
         Ti_k = self.ionTemperature.to(u.K, equivalencies=u.temperature_energy())
-        return thermal_speed(Ti_k, self.particle)
 
-    @property
-    def vte(self):
-        Te_k = self.electronTemperature.to(u.K, equivalencies=u.temperature_energy())
-        return thermal_speed(Te_k)
+        self.vti = thermal_speed(Ti_k, self.particle)
 
-    @property
-    def driftSpeed(self):
-        return  (self.electricField/self.magneticField).to(u.m/u.s)
+        self.vte =  thermal_speed(Te_k)
+
+        self.driftSpeed = (self.electricField/self.magneticField).to(u.m/u.s)

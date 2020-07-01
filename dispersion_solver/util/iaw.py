@@ -22,11 +22,11 @@ def eps_IAW(omg, kx, ky, kz, prt=PlasmaParameters(),
     if k2 == 0:
         raise RuntimeError("The wave vector is Zero !!")
 
-    iChi = (omg) / (ky * prt.vti.value)
-    eChi = (omg - ky * prt.driftSpeed.value) / (ky * prt.vte.value)
+    iChi = (omg) / (ky * prt.vti/prt.BohmSpeed)
+    eChi = (omg - ky * prt.driftSpeed/prt.BohmSpeed) / (ky * prt.vte/prt.BohmSpeed)
 
-    iEps = 1 / (ky**2 * prt.vti.value ** 2) * Zip(iChi)
-    eEps = prt.electronPlasmaFrequency.value ** 2 / (ky**2 * prt.vte.value ** 2) * Zep(eChi)
+    iEps = 1 / (ky**2 * (prt.vti/prt.BohmSpeed) ** 2) * Zip(iChi)
+    eEps = (prt.electronPlasmaFrequency/prt.ionPlasmaFrequency) ** 2 / (ky**2 * (prt.vte/prt.BohmSpeed) ** 2) * Zep(eChi)
 
     return 1 - iEps - eEps
 
