@@ -26,5 +26,19 @@ The usual approache is to
 
 ## Normalised Relation
 
+The wave vectors are normalized by the debye length $$\lambda_{De} = \sqrt{ \frac{\epsilon_0 k_B T_e}{n_e q_e^2}}$$
+with $\epsilon_0$ the vacuum permitivity, $k_B$ the Boltzman constant, $T_e$ the electron temperature (in Kelvin), $n_e$ the electron density, and $q_e$ the elementary charge.
 
+The pulsation are normalized by the ion plasma pulsation 
+$$\omega_{pi} = \sqrt{  \frac{n_e q_e^2}{m_i \epsilon_0}}$$
+with $m_i$ the ion mass.
+
+The velocities are normalized by 
+$$\lambda_{De} \omega_{pi} = \sqrt{\frac{k_B T_e}{m_i}} = u_B$$ the Bohm speed.
+
+The normalized equation reads
+$$ 1 - \frac{1}{\tilde{\omega}} - \frac{m_i}{m_e} \frac{ \tilde{k_z}}{ (\tilde{\omega} - \tilde{k} \tilde{v_0})^2 \tilde{k}^2} - \frac{m_i}{m_e} \frac{ \tilde{k_y}}{ ((\tilde{\omega} - \tilde{k} \tilde{v_0})^2 - \frac{\Omega_{ce}^2}{\omega_{pi}^2}) \tilde{k}^2} =0$$
+
+with $\tilde{\omega} = \frac{\omega}{\omega_{pi}}$, $\tilde{k} = k \lambda_{De}$, and $\tilde{v_0} = \frac{v_0}{u_B}$.
+The normalized equation is not much simpler than the previous version, but now the variables are of the order of unity.
    
