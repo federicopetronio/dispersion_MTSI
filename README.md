@@ -38,7 +38,8 @@ The velocities are normalized by
 $$\lambda_{De} \omega_{pi} = \sqrt{\frac{k_B T_e}{m_i}} = u_B$$ the Bohm speed.
 
 The normalized equation reads
-$$ 1 - \frac{1}{\tilde{\omega}} - \frac{m_i}{m_e} \frac{ \tilde{k_z}}{ (\tilde{\omega} - \tilde{k} \tilde{v_0})^2 \tilde{k}^2} - \frac{m_i}{m_e} \frac{ \tilde{k_y}}{ ((\tilde{\omega} - \tilde{k} \tilde{v_0})^2 - \frac{\Omega_{ce}^2}{\omega_{pi}^2}) \tilde{k}^2} =0$$
+<!-- $$ 1 - \frac{1}{\tilde{\omega}} - \frac{m_i}{m_e} \frac{ \tilde{k_z}}{ (\tilde{\omega} - \tilde{k} \tilde{v_0})^2 \tilde{k}^2} - \frac{m_i}{m_e} \frac{ \tilde{k_y}}{ ((\tilde{\omega} - \tilde{k} \tilde{v_0})^2 - \frac{\Omega_{ce}^2}{\omega_{pi}^2}) \tilde{k}^2} =0$$ -->
+![equation](https://latex.codecogs.com/gif.latex?1%20-%20%5Cfrac%7B1%7D%7B%5Ctilde%7B%5Comega%7D%7D%20-%20%5Cfrac%7Bm_i%7D%7Bm_e%7D%20%5Cfrac%7B%20%5Ctilde%7Bk_z%7D%7D%7B%20%28%5Ctilde%7B%5Comega%7D%20-%20%5Ctilde%7Bk%7D%20%5Ctilde%7Bv_0%7D%29%5E2%20%5Ctilde%7Bk%7D%5E2%7D%20-%20%5Cfrac%7Bm_i%7D%7Bm_e%7D%20%5Cfrac%7B%20%5Ctilde%7Bk_y%7D%7D%7B%20%28%28%5Ctilde%7B%5Comega%7D%20-%20%5Ctilde%7Bk%7D%20%5Ctilde%7Bv_0%7D%29%5E2%20-%20%5Cfrac%7B%5COmega_%7Bce%7D%5E2%7D%7B%5Comega_%7Bpi%7D%5E2%7D%29%20%5Ctilde%7Bk%7D%5E2%7D%20%3D0)
 
 with $\tilde{\omega} = \frac{\omega}{\omega_{pi}}$, $\tilde{k} = k \lambda_{De}$, and $\tilde{v_0} = \frac{v_0}{u_B}$.
 The normalized equation is not much simpler than the previous version, but now the variables are of the order of unity.
