@@ -24,6 +24,8 @@ class PlasmaParameters():
 
         self.ionMass = ionMass
         assert self.ionMass.unit.physical_type == (1*u.kg).unit.physical_type, f"The ionmass is not similare to 'kg', instead you provided {self.ionMass.unit.physical_type}"
+
+        self.electronMass = m_e
         self.particle = ionName
 
         self.electronTemperature = electronTemperature
@@ -55,3 +57,7 @@ class PlasmaParameters():
         self.vte =  thermal_speed(Te_k)
 
         self.driftSpeed = (self.electricField/self.magneticField).to(u.m/u.s)
+
+        self.mi_over_me = self.ionMass/self.electronMass
+
+        self.electronCyclotronFrequency = (e.si * self.magneticField / self.electronMass).to(u.Hz)
