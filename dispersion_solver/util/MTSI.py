@@ -28,4 +28,3 @@ def eps_MTSI(omg, kx, ky, kz, prt=PlasmaParameters()):
     eEpsy = prt.mi_over_me * ( ky**2 ) / ( ((omg - ky * prt.driftSpeed/prt.BohmSpeed)**2 - prt.electronCyclotronFrequency**2/ (prt.ionPlasmaFrequency/u.rad)**2)* k2 )
 
     return 1 - iEps - eEpsz - eEpsy
-
