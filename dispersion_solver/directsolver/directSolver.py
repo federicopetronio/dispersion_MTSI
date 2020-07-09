@@ -47,7 +47,7 @@ class DirectSolver():
         all_f_i = [self.funct(x0)]
 
         def store(X):
-            x, y = X
+            x, y = X[:2]
             all_x_i.append(x)
             all_y_i.append(y)
             all_f_i.append(self.funct(X))
@@ -55,10 +55,13 @@ class DirectSolver():
         sc.optimize.minimize(self.funct, x0, jac=self.jac, method=self.method , callback=store, options=self.optionslow)
         r = self.funct([all_x_i[-1], all_y_i[-1]])
         if r > 0.001:
+            # print("eppala",self.ky,r)
             all_x_i = [x0[0]]
             all_y_i = [x0[1]]
             all_f_i = [self.funct(x0)]
             sc.optimize.minimize(self.funct, x0, jac=self.jac, method=self.method , callback=store, options=self.optionshigh)
+            r = self.funct([all_x_i[-1], all_y_i[-1]])
+            # print("eppala bis",self.ky,all_f_i[-1])
 
         return all_x_i, all_y_i, all_f_i
 
@@ -71,11 +74,11 @@ class DirectSolver():
         else:
             return self.x0
 
-    def solve(self):
+    def solve(self, ciclic=True):
         """We use nelder_mead because I am not sure of the Jacobian of the matrix"""
         all_x_i, all_y_i, all_f_i = self.nelder_mead()
-        x = [all_x_i[-1], all_y_i[-1]]
-        self.set_x0(x)
+        x = [all_x_i[-1], all_y_i[-1], all_f_i[-1]]
+        self.set_x0(x[:2])
         return x
 
 
@@ -101,7 +104,9 @@ class SolveKy:
 
         else:
             if self.wrfunct is not None:
-                self.DS.set_x0([self.wrfunct(ky), 0.01])
+                # self.DS.set_x0([self.wrfunct(ky), 0.01])
+                self.DS.set_x0([self.wrfunct(ky).real, self.wrfunct(ky).imag])
+
             else:
                 if ky > 0.5:
                     self.DS.set_x0([ky/2, 0.1])
@@ -111,11 +116,12 @@ class SolveKy:
         return x
 
 
-def solvekys(costFunc, kx, kz, kymin=0.01, kymax = 2, Nkys= 100, method="Nelder-Mead", plot=False, constfuncRef=None, parall=True, wrfunct=None):
+def solvekys(costFunc, kx, kz, kymin=0.01, kymax = 2, Nkys= 100, method="Nelder-Mead", already_solved=False,plot=False, constfuncRef=None, parall=True, wrfunct=None):
     DS = DirectSolver(0.0001,1,0,1,costFunc = costFunc, method=method)
     DS.set_x0([0,0.0])
     kys = np.linspace(kymin, kymax, Nkys)
-    xs = np.zeros((len(kys), 2))
+    # xs = np.zeros((len(kys), 2))
+    xs = np.zeros((len(kys), 3))
 
     if parall:
         tmpObj = SolveKy(costFunc, kx, kz, method)
@@ -128,7 +134,8 @@ def solvekys(costFunc, kx, kz, kymin=0.01, kymax = 2, Nkys= 100, method="Nelder-
         DS = DirectSolver(0.0001,1,0,1,costFunc = costFunc, method=method)
 
         if wrfunct is not None:
-            DS.set_x0([1.5*wrfunct(kymin), 0.1])
+            # DS.set_x0([1.5*wrfunct(kymin), 0.1])
+            DS.set_x0([wrfunct(kymin).real,wrfunct(kymin).imag])
         else:
             if kymax > 0.5:
                 DS.set_x0([kymin/2, 0.1])
@@ -137,8 +144,10 @@ def solvekys(costFunc, kx, kz, kymin=0.01, kymax = 2, Nkys= 100, method="Nelder-
             DS.setks(kx, ky, kz)
             x0 = DS.solve()
             xs[i,:] = x0
-            DS.set_x0(x0)
-
+            if already_solved:
+                DS.set_x0([wrfunct(ky).real,wrfunct(ky).imag])
+            else:
+                DS.set_x0(x0)
 
     if plot:
         plt.figure()
