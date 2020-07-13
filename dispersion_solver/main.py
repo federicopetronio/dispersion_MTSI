@@ -68,7 +68,7 @@ Nkys = 200
 plasmaEps = partial(eps_MTSI, prt=prt) #assign to the function eps_MTSI the value of prt from now on
 primo = True
 dispersion = np.zeros((11,3,Nkys))
-kzetas = np.arange(0.001,0.01,0.001)
+kzetas = np.arange(0.001,0.05,0.005)
 # we still use the IAW as a first guess
 # wrfunct = lambda k: analytic_IAW(k, ti=prt.ionTemperature/ prt.electronTemperature)
 
