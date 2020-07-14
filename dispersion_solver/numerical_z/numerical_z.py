@@ -84,14 +84,14 @@ class NumericZ:
 
         # Complex domain
         compindex = np.nonzero(np.imag(w) != 0)
-        
+
         if len(compindex) > 0:
             wcomp = w[compindex]
             zf = w[compindex]
-            
+
             negativimag = np.nonzero(zf.imag < 0)
             positivimag = np.nonzero(zf.imag != 0)
-            
+
             #zf[negativimag] = np.conj(zf[negativimag])
 
             h2 = self.hilb2(zf)
@@ -107,7 +107,7 @@ class NumericZ:
 
 
         return np.pi * zvalues
-    
+
     def __call__(self, w):
 
         if not isinstance(w, np.ndarray):

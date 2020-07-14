@@ -7,7 +7,7 @@ import multiprocessing as mp
 
 class DirectSolver():
 
-    def __init__(self, xmin, xmax, ymin, ymax, costFunc, method="Nelder-Mead"):
+    def __init__(self, xmin, xmax, ymin, ymax, costFunc, method="Nelder-Mead",root = False):
         self.xmin = xmin
         self.xmax = xmax
         self.ymin = ymin
@@ -16,7 +16,7 @@ class DirectSolver():
         self.domain = (xmin, ymin, xmax, ymax)
         self.x0 = None
         self.method = method
-
+        self.root = root
         if self.method in ["Powell", "Nelder-Mead"]:
             self.jac=None
             self.optionslow = {"fatol": 1e-12, "maxiter":800}
@@ -38,6 +38,11 @@ class DirectSolver():
             return 10^300
         return x
 
+    def funct_root(self, xs):
+        x = np.abs(self.costFunc(xs[0] + 1j*xs[1], self.kx, self.ky, self.kz))
+        if x is np.nan:
+            return 10^300
+        return [x,0]
 
 
     def nelder_mead(self):
@@ -52,16 +57,28 @@ class DirectSolver():
             all_y_i.append(y)
             all_f_i.append(self.funct(X))
 
-        sc.optimize.minimize(self.funct, x0, jac=self.jac, method=self.method , callback=store, options=self.optionslow)
+        if self.root :
+            sol = sc.optimize.root(self.funct_root, x0, method='hybr')
+            all_x_i.append(sol.x[0])
+            all_y_i.append(sol.x[1])
+            all_f_i.append(self.funct(sol.x))
+        else :
+            sc.optimize.minimize(self.funct, x0, jac=self.jac, method=self.method , callback=store, options=self.optionslow)
+
         r = self.funct([all_x_i[-1], all_y_i[-1]])
         if r > 0.001:
-            # print("eppala",self.ky,r)
             all_x_i = [x0[0]]
             all_y_i = [x0[1]]
             all_f_i = [self.funct(x0)]
-            sc.optimize.minimize(self.funct, x0, jac=self.jac, method=self.method , callback=store, options=self.optionshigh)
+            if self.root :
+                sol = sc.optimize.root(self.funct_root, x0,method='hybr')
+                all_x_i.append(sol.x[0])
+                all_y_i.append(sol.x[1])
+                all_f_i.append(self.funct(sol.x))
+
+            else :
+                sc.optimize.minimize(self.funct, x0, jac=self.jac, method=self.method , callback=store, options=self.optionslow)
             r = self.funct([all_x_i[-1], all_y_i[-1]])
-            # print("eppala bis",self.ky,all_f_i[-1])
 
         return all_x_i, all_y_i, all_f_i
 
@@ -86,9 +103,9 @@ class DirectSolver():
 
 class SolveKy:
     def __init__(self, costFunc, kx, kz, method, x0=[0.1,0.0], constfuncRef=None, wrfunct=None):
-        self.DS = DirectSolver(0.0001,1,0,1,costFunc = costFunc, method=method)
+        self.DS = DirectSolver(0.0001,1,0,1,costFunc = costFunc, method=method, root = False)
         self.constfuncRef = constfuncRef
-        self.DSref = DirectSolver(0.0001,1,0,1,costFunc=constfuncRef, method=method)
+        self.DSref = DirectSolver(0.0001,1,0,1,costFunc=constfuncRef, method=method, root = False)
         self.DS.set_x0(x0)
         self.DSref.set_x0(x0)
         self.kx = kx
@@ -116,8 +133,8 @@ class SolveKy:
         return x
 
 
-def solvekys(costFunc, kx, kz, kymin=0.01, kymax = 2, Nkys= 100, method="Nelder-Mead", already_solved=False,plot=False, constfuncRef=None, parall=True, wrfunct=None):
-    DS = DirectSolver(0.0001,1,0,1,costFunc = costFunc, method=method)
+def solvekys(costFunc, kx, kz, kymin=0.01, kymax = 2, Nkys= 100, method="Nelder-Mead", already_solved=False,plot=False, constfuncRef=None, parall=True, wrfunct=None, root = False):
+    DS = DirectSolver(0.0001,1,0,1,costFunc = costFunc, method=method,root=False)
     DS.set_x0([0,0.0])
     kys = np.linspace(kymin, kymax, Nkys)
     # xs = np.zeros((len(kys), 2))
@@ -131,7 +148,7 @@ def solvekys(costFunc, kx, kz, kymin=0.01, kymax = 2, Nkys= 100, method="Nelder-
             xs = pool.map(SolveKy(costFunc, kx, kz, method, x0=x0, constfuncRef=constfuncRef, wrfunct=wrfunct), kys)
         xs = np.array(xs)
     else:
-        DS = DirectSolver(0.0001,1,0,1,costFunc = costFunc, method=method)
+        DS = DirectSolver(0.0001,1,0,1,costFunc = costFunc, method=method, root=root)
 
         if wrfunct is not None:
             # DS.set_x0([1.5*wrfunct(kymin), 0.1])
