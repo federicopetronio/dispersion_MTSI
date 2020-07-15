@@ -33,7 +33,21 @@ from datetime import date, datetime
 
 today = date.today()
 now = datetime.now()
-current = today.strftime("%y%m%d_")+now.strftime("%H:%M:%S")
+current = today.strftime("%y%m%d_")+now.strftime("%H:%M:%S")+"map2D"
+sentierino = os.getcwd()
+while True:
+    try:
+        os.mkdir(sentierino + "/dispersion_data")
+    except:
+        print("already existing folder dispersion_data")
+    try:
+        os.mkdir(sentierino + "/dispersion_data/2Dmap")
+    except:
+        print("existing folder 2Dmap")
+        break
+path = sentierino + "/dispersion_data/2Dmap/"
+# path = "/home/petronio/Nextcloud/theseLPP/runs/runs_benchmark/MTSI/dispersion_MTSI/dispersion_solver/dispersion_data/"
+print(path)
 
 kx = 0.0
 prt=PlasmaParameters(plasmaDensity=5e16/u.m**3,
@@ -43,9 +57,9 @@ prt=PlasmaParameters(plasmaDensity=5e16/u.m**3,
                      ionTemperature=0.5*u.eV)
 
 kz = 0.001
-ky = 0.023
+ky = 0.027
 
-gioco_omega = np.arange(0.01,0.5,0.005)
+gioco_omega = np.arange(0.02,0.5,0.005)
 gioco_gamma = np.arange(0.01,1,0.005)
 # gioco_gamma = np.arange(0.02,3,0.01)
 # gioco_omega = np.arange(0.01,3,0.01)
@@ -63,6 +77,9 @@ for i,omega in enumerate(gioco_omega) :
         solution_real[i,j] = zia.real
         solution_imag[i,j] = zia.imag
 
+a=abs(solution_real+1j*solution_imag)
+max_pos = np.unravel_index(abs(a).argmax(), a.shape)
+print(max_pos)
 # plt.figure()
 # plt.pcolor(gioco_gamma,gioco_omega, solution_real)
 # plt.colorbar()
@@ -76,6 +93,10 @@ plt.title("invers of susceptibility ")
 plt.pcolor(gioco_gamma,gioco_omega, abs(solution_real+1j*solution_imag))
 plt.xlabel("$\gamma/\omega_{pi}$")
 plt.ylabel("$\omega/\omega_{pi}$")
+plt.text(x=gioco_gamma[-70],y=gioco_omega[-25],s="kz = %5.4f \n"%kz + "ky = %5.4f \n"%ky+
+        "$\omega_{max}$ = %6.4f \n"%gioco_omega[max_pos[0]] + "$\gamma_{max}$ = %6.4f"%gioco_gamma[max_pos[1]],color='red')
+# plt.text(x=gioco_gamma[-70],y=gioco_omega[-15],s="$\omega_{max}$ = %6.4f \n"%gioco_omega[max_pos[0]] + "$\gamma_{max}$ = %6.4f"%gioco_gamma[max_pos[1]],color='red')
+plt.savefig(path + "kz=%5.4f"%kz + "_ky+%5.4f"%ky+".png")
 plt.colorbar()
 
 

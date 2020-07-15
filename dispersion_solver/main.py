@@ -76,7 +76,7 @@ kymax = 0.1
 
 plasmaEps = partial(eps_MTSI, prt=prt) #assign to the function eps_MTSI the value of prt from now on
 primo = True
-kzetas = np.arange(0.001,0.004,0.0004)
+kzetas = np.arange(0.001,0.003,0.0001)
 dispersion = np.zeros((len(kzetas),4,Nkys))
 dispersion_clean = np.zeros((len(kzetas),4,Nkys))
 # we still use the IAW as a first guess
@@ -101,12 +101,12 @@ for i,kz in enumerate(kzetas):
     dispersion[i,2,:] = xsref1[:,1]
     dispersion[i,3,:] = xsref1[:,2]
 
-    f = open(path + current + "/kz={:4.3f}".format(kz) + "_omega_r.txt","w+")
+    f = open(path + current + "/kz={:5.4f}".format(kz) + "_omega_r.txt","w+")
     for ind in range(len(kysref1)):
         f.write(str(xsref1[ind,0]) + "  ")
     f.close()
 
-    f = open(path + current + "/kz={:4.3f}".format(kz) + "_gamma.txt","w+")
+    f = open(path + current + "/kz={:5.4f}".format(kz) + "_gamma.txt","w+")
     for ind in range(len(kysref1)):
         f.write(str(xsref1[ind,1]) + "  ")
     f.close()
