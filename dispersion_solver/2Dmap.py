@@ -72,9 +72,10 @@ for i,omega in enumerate(gioco_omega) :
 # plt.colorbar()
 
 plt.figure()
+plt.title("invers of susceptibility ")
 plt.pcolor(gioco_gamma,gioco_omega, abs(solution_real+1j*solution_imag))
-plt.xlabel("$k_{\Theta}$")
-plt.ylabel("$k_r$")
+plt.xlabel("$\gamma/\omega_{pi}$")
+plt.ylabel("$\omega/\omega_{pi}$")
 plt.colorbar()
 
 

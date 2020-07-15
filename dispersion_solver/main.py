@@ -37,7 +37,14 @@ current = today.strftime("%y%m%d_")+now.strftime("%H:%M:%S")
 print("Today's date:", current)
 #calculate kz
 
-path = "/home/petronio/Nextcloud/theseLPP/runs/runs_benchmark/MTSI/dispersion_MTSI/dispersion_solver/dispersion_data/"
+sentierino = os.getcwd()
+try:
+    os.mkdir(sentierino + "/dispersion_data")
+except:
+    print("already existing folder dispersion_data")
+path = sentierino + "/dispersion_data/"
+# path = "/home/petronio/Nextcloud/theseLPP/runs/runs_benchmark/MTSI/dispersion_MTSI/dispersion_solver/dispersion_data/"
+print(path)
 
 kx = 0.0
 prt=PlasmaParameters(plasmaDensity=plasmaDensity,
