@@ -68,7 +68,7 @@ def first_guess_mod(k):
             a = ka
             break
 
-    return first_guess_1(ka)
+    return first_guess_1(a)
 
 
 def precedent_guess(k, ky,ome,gam):
@@ -77,3 +77,13 @@ def precedent_guess(k, ky,ome,gam):
     gamma = gam
     index = np.where(kappa == k)
     return complex(omega[index],gamma[index])
+
+def precedent_guess_mod(k, ky,ome,gam):
+    kappa = ky
+    omega = ome
+    gamma = gam
+    for index,ka in enumerate(kappa) :
+        if ka >= k :
+            solution_prec = complex(omega[index],gamma[index])
+            break
+    return solution_prec

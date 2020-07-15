@@ -15,7 +15,6 @@ def eps_MTSI(omg, kx, ky, kz, prt=PlasmaParameters()):
     :param kz: wave number in the $y$ direction, normalised by the Debye length. $z$ is the direction parallel to the magnetif field lines (radial direction in Hall effect thrusters)
     :param prt: Plasma parameters,
     :return:
-
     """
 
     k2 = kz ** 2 + ky ** 2
