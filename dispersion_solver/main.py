@@ -11,7 +11,8 @@ reload(directsolver)
 import util
 reload(util)
 from util.MTSI  import eps_MTSI
-from util.iaw import eps_IAW, analytic_IAW, analytic_IAW_simple,first_guess,first_guess_1,precedent_guess,first_guess_mod,precedent_guess_mod
+from util.iaw import eps_IAW, analytic_IAW, analytic_IAW_simple,first_guess,first_guess_1,first_guess_mod
+from util.iaw import precedent_openfile, precedent_guess,precedent_guess_mod
 from directsolver import solvekys
 from scipy import optimize
 
@@ -70,25 +71,30 @@ f.close()
 # kz = 0.005550
 # kz = 0.001
 print("kz * lambda_d = ",kz)
-Nkys = 500
+Nkys = 668
 kymin = 0.001
-kymax = 0.1
+kymax = 0.16
+# kapa = np.arange(kymin,kymax,(kymax-kymin)/Nkys)
 
 plasmaEps = partial(eps_MTSI, prt=prt) #assign to the function eps_MTSI the value of prt from now on
 primo = True
-kzetas = np.arange(0.001,0.003,0.0001)
+kzetas = np.arange(0.0277,0.0600,0.0002) 
 dispersion = np.zeros((len(kzetas),4,Nkys))
 dispersion_clean = np.zeros((len(kzetas),4,Nkys))
-# we still use the IAW as a first guess
-# wrfunct = lambda k: analytic_IAW(k, ti=prt.ionTemperature/ prt.electronTemperature)
+
+
 
 for i,kz in enumerate(kzetas):
     print("kz * lambda_d = ",kz)
     # different first guess
     # USE ONLY WITH kymin=0.01, kymax=2, Nkys=200
     if primo :
-        wrfunct = lambda k: first_guess_mod(k)
-        primo = False
+        if kz == 0.001:
+            wrfunct = lambda k: first_guess_mod(k)
+            primo = False
+        else :
+            wrfunct = lambda k: precedent_openfile(k=k,kz=kz)
+            primo = False
     else :
         # wrfunct = lambda k: precedent_guess(k=k,ky=kysref1,ome=dispersion[i-1,1,:],gam=dispersion[i-1,2,:])
         wrfunct = lambda k: precedent_guess_mod(k=k,ky=ky_1,ome=omega_1,gam=gamma_1)

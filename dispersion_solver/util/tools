@@ -1,0 +1,15 @@
+import numpy as np
+
+
+def open_disp_file(kz):
+    path = '/home/petronio/Nextcloud/theseLPP/runs/runs_benchmark/MTSI/dispersion_MTSI/dispersion_solver/dispersion_data/general_results/'
+    kappa = np.genfromtxt(path + "ky.txt", delimiter="  ")
+    omega = np.genfromtxt(path + "kz={:5.4f}".format(kz) + "_omega_r.txt", delimiter="  ", unpack=False)
+    gamma = np.genfromtxt(path + "kz={:5.4f}".format(kz) + "_gamma.txt", delimiter="  ", unpack=False)
+    return kappa,omega,gamma
+
+
+def find_max_gamma(kz):
+    kappa,omega,gamma = open_disp_file(kz)
+    max_ind = np.argmax(gamma)
+    return kappa[max_ind],omega[max_ind],gamma[max_ind]
