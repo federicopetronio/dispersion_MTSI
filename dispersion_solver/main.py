@@ -73,11 +73,11 @@ f.close()
 print("kz * lambda_d = ",kz)
 Nkys = 500
 kymin = 0.001
-kymax = 0.1
+kymax = 0.12
 
 plasmaEps = partial(eps_MTSI, prt=prt) #assign to the function eps_MTSI the value of prt from now on
 primo = True
-kzetas = np.arange(0.0059,0.01,0.0001)
+kzetas = np.arange(0.0099,0.015,0.0001)
 dispersion = np.zeros((len(kzetas),4,Nkys))
 dispersion_clean = np.zeros((len(kzetas),4,Nkys))
 

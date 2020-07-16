@@ -95,7 +95,7 @@ def precedent_openfile(k,kz):
     # print(omega[:10])
     gamma = np.genfromtxt(path + "kz={:5.4f}".format(kz) + "_gamma.txt", delimiter="  ", unpack=False)
     # print(gamma[:10])
-    solution_prec = 0.2+1j*1e-10
+    solution_prec = omega[-1]+1j*gamma[-1]
     for index,ka in enumerate(kappa) :
         if ka >= k :
             solution_prec = complex(omega[index],gamma[index])

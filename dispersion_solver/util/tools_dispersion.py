@@ -47,16 +47,22 @@ def verification_dispersion(kz):
     solution_imag = np.zeros((len(gioco_omega),len(gioco_gamma)))
     plasmaEps = partial(eps_MTSI, prt=prt) #assign to the function eps_MTSI the value of prt from now on
 
-    for i,omega_1 in enumerate(gioco_omega) :
-        for j,gamma_1 in enumerate(gioco_gamma) :
-            # solution[i,j] = plasmaEps(omg=omega+1j*gamma,kx=0.0,kz=kz,ky=ky)
-            zia = 1/plasmaEps(omg=omega_1+1j*gamma_1,kx=0.0,kz=kz,ky=ky)
-            # print(zia)
-            solution_real[i,j] = zia.real
-            solution_imag[i,j] = zia.imag
+    kyons = [ky-0.0001,ky,ky+0.0001]
+    # kyons = ky
+    max_pos = np.zeros((3,2))
+    for kk,kaps in enumerate(kyons):
+        for i,omega_1 in enumerate(gioco_omega) :
+            for j,gamma_1 in enumerate(gioco_gamma) :
+                # solution[i,j] = plasmaEps(omg=omega+1j*gamma,kx=0.0,kz=kz,ky=ky)
+                zia = 1/plasmaEps(omg=omega_1+1j*gamma_1,kx=0.0,kz=kz,ky=kaps)
+                # print(zia)
+                solution_real[i,j] = zia.real
+                solution_imag[i,j] = zia.imag
 
-    abs_sol=abs(solution_real+1j*solution_imag)
-    max_pos = np.unravel_index(abs(abs_sol).argmax(), abs_sol.shape)
+        abs_sol=abs(solution_real+1j*solution_imag)
+        max_pos[kk,:] = np.unravel_index(abs(abs_sol).argmax(), abs_sol.shape)
+
+    # print(gioco_gamma[int(max_pos[0,1])])
     plt.figure()
     plt.title("invers of susceptibility ")
     plt.pcolor(gioco_gamma,gioco_omega, abs(solution_real+1j*solution_imag))
@@ -65,12 +71,24 @@ def verification_dispersion(kz):
     # plt.text(x=gioco_gamma[-70],y=gioco_omega[-25],s="kz = %5.4f \n"%kz + "ky = %5.4f \n"%ky+
     #         "$\omega_{max}$ = %6.4f \n"%gioco_omega[max_pos[0]] + "$\gamma_{max}$ = %6.4f"%gioco_gamma[max_pos[1]],color='red')
     plt.colorbar()
-
+    #
     plt.figure(figsize=(6,5))
     plt.plot(kappa,gamma, label="solver solution")
-    plt.plot(ky,gioco_gamma[max_pos[1]],'*',label = "computed solution")
+    plt.plot(kyons[0],gioco_gamma[int(max_pos[0,1])],'*',color='blue',label = "computed solution")
+    plt.plot(kyons[1],gioco_gamma[int(max_pos[1,1])],'*',color='blue')
+    plt.plot(kyons[2],gioco_gamma[int(max_pos[2,1])],'*',color='blue')
     plt.xlabel("Azimuthal wave number $k_{\\theta} \\lambda_{De}$")
-    plt.ylabel("Pulsations  $\\gamma/\\omega_{pi}$ ")
+    plt.ylabel("Growth rate  $\\gamma/\\omega_{pi}$ ")
+    plt.legend()
+
+
+    plt.figure(figsize=(6,5))
+    plt.plot(kappa,omega, label="solver solution")
+    plt.plot(kyons[0],gioco_omega[int(max_pos[0,0])],'*',color='blue',label = "computed solution")
+    plt.plot(kyons[1],gioco_omega[int(max_pos[1,0])],'*',color='blue')
+    plt.plot(kyons[2],gioco_omega[int(max_pos[2,0])],'*',color='blue')
+    plt.xlabel("Azimuthal wave number $k_{\\theta} \\lambda_{De}$")
+    plt.ylabel("Pulsations  $\\omega/\\omega_{pi}$ ")
     plt.legend()
     plt.show()
     return max_pos
