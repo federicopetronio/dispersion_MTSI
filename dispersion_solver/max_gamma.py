@@ -8,11 +8,11 @@ from util.tools_dispersion import open_disp_file,find_max_gamma,verification_dis
 ### max gamma evolution
 
 fig, ax1 = plt.subplots(figsize=(6,5))
-ax1.set_xlabel("kz")
-ax1.set_ylabel('ky max', color='blue')
+ax1.set_xlabel("kz $\lambda_D$")
+ax1.set_ylabel('ky $\lambda_D$ max', color='blue')
 ax2 = ax1.twinx()
-ax2.set_ylabel('ky max', color='red')
-kzetas = np.arange(0.0011,0.006,0.0001)
+ax2.set_ylabel('$\gamma / \omega_{pi}$', color='red')
+kzetas = np.arange(0.0011,0.0155,0.0001)
 for kz in kzetas:
     kap,ome,gam = find_max_gamma(kz)
     ax1.plot(kz,kap,'*',color="blue")
