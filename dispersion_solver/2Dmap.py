@@ -57,7 +57,7 @@ prt=PlasmaParameters(plasmaDensity=5e16/u.m**3,
                      ionTemperature=0.5*u.eV)
 
 kz = 0.001
-ky = 0.027
+ky = 0.0268
 
 gioco_omega = np.arange(0.02,0.5,0.005)
 gioco_gamma = np.arange(0.01,1,0.005)
