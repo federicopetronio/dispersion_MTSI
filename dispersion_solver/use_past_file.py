@@ -22,20 +22,17 @@ from astropy.constants import m_e, m_p
 me = m_e.value
 mi = 131*m_p.value
 
+# "PROBLEM IN OPENING THE FILES WHERE THE KY ARE NOT EXACTLY THE ONES EXPECTED"
 #~~~~~~~~~~~~~~~~~~~~~~
 
 from util.parameters import PlasmaParameters
 Te = 10*u.eV
-plasmaDensity=5e16 *u.m**(-3)
+plasmaDensity=1e17 *u.m**(-3)
 pp = PlasmaParameters(plasmaDensity=plasmaDensity, electronTemperature=Te)
 
 #~~~~~~~~~~~~~~~~~~~~~~
 from datetime import date, datetime
 
-today = date.today()
-now = datetime.now()
-current = today.strftime("%y%m%d_")+now.strftime("%H:%M:%S")
-print("Today's date:", current)
 #calculate kz
 
 sentierino = os.getcwd()
@@ -57,8 +54,17 @@ prt=PlasmaParameters(plasmaDensity=plasmaDensity,
 Lr = 0.0128*u.m
 kz = 2*np.pi*prt.Debye_length/Lr
 
-os.mkdir(path + current)
-os.mkdir(path + current + "/images_dispersion")
+kzetas = [0.0551,0.0551]
+current = "kz={:.4f}".format(kzetas[0])
+try:
+    os.mkdir(path + current)
+except:
+    print("t'appost")
+try:
+    os.mkdir(path + current + "/images_dispersion")
+except:
+    print("t'appost")
+
 
 f = open(path + current + "/parameters.txt","w+")
 f.write("plasma density: " + str(prt.plasmaDensity)+"\r\n"+ "\r\n")
@@ -71,15 +77,16 @@ f.close()
 # kz = 0.005550
 # kz = 0.001
 print("kz * lambda_d = ",kz)
-Nkys = 668+84+84+84
+Nkys = 668+84+84
 kymin = 0.001
-kymax = 0.22
+kymax = 0.20
 # kapa = np.arange(kymin,kymax,(kymax-kymin)/Nkys)
 
 plasmaEps = partial(eps_MTSI, prt=prt) #assign to the function eps_MTSI the value of prt from now on
 primo = True
-kzetas = np.arange(0.0559,0.0600,0.0004)
-# kzetas = [0.0447,0.0447,0.0447]
+
+
+
 dispersion = np.zeros((len(kzetas),4,Nkys))
 dispersion_clean = np.zeros((len(kzetas),4,Nkys))
 
@@ -89,18 +96,12 @@ for i,kz in enumerate(kzetas):
     print("kz * lambda_d = ",kz)
     # different first guess
     # USE ONLY WITH kymin=0.01, kymax=2, Nkys=200
-    if primo :
-        if kz == 0.001:
-            wrfunct = lambda k: first_guess_mod(k)
-            primo = False
-        else :
-            omega_1, gamma_1 = precedent_openfile(kz=kz,Nkys=Nkys)
-            ky_1 = np.arange(kymin,kymax,(kymax-kymin)/Nkys)
-            wrfunct = lambda k: precedent_guess_mod(k=k,ky=ky_1,ome=omega_1,gam=gamma_1)
-            primo = False
-    else :
-        # wrfunct = lambda k: precedent_guess(k=k,ky=kysref1,ome=dispersion[i-1,1,:],gam=dispersion[i-1,2,:])
-        wrfunct = lambda k: precedent_guess_mod(k=k,ky=ky_1,ome=omega_1,gam=gamma_1)
+    if primo:
+        omega_1, gamma_1 = precedent_openfile(kz=kz,Nkys=Nkys)
+        ky_1 = np.arange(kymin,kymax,(kymax-kymin)/Nkys)
+        primo = False
+
+    wrfunct = lambda k: precedent_guess_mod(k=k,ky=ky_1,ome=omega_1,gam=gamma_1)
 
     kysref1,  xsref1 = solvekys(plasmaEps, kx=kx, kz=kz, kymin=kymin, kymax=kymax,
                              parall=False, wrfunct=wrfunct,Nkys=Nkys,already_solved=True,root=False)
@@ -125,40 +126,6 @@ for i,kz in enumerate(kzetas):
             dispersion[i,1,j] = 1e-12
             dispersion[i,2,j] = 1e-12
 
-    ky_1 = dispersion[i,0,:]
-    omega_1 = dispersion[i,1,:]
-    gamma_1 = dispersion[i,2,:]
-    argmax_1 = np.argmax(gamma_1)
-    # print("max : ", argmax_1, gamma_1[argmax_1])
-    cont = 0
-    for j in np.arange(0,argmax_1):
-        if gamma_1[j-cont]<1e-8 :
-            ky_1 = np.delete(ky_1,j-cont)
-            omega_1 = np.delete(omega_1,j-cont)
-            gamma_1 = np.delete(gamma_1,j-cont)
-            cont = cont+1
-
-
-            # dispersion[i,1,j] = dispersion[i,1,j-1]*2-dispersion[i,1,j-2]
-            # dispersion[i,2,j] = dispersion[i,2,j-1]*2-dispersion[i,2,j-2]
-
-    ### DOUBLE INJECTION
-    # wrfunct = lambda k: precedent_guess(k=k,ky=kysref1,ome=dispersion[i,1,:],gam=dispersion[i,2,:])
-    #
-    # kysref1,  xsref1 = solvekys(plasmaEps, kx=kx, kz=kz, kymin=0.01, kymax=0.5,
-    #                          parall=False, wrfunct=wrfunct,Nkys=Nkys,already_solved=True)
-    #
-    # dispersion[i,0,:] = kysref1
-    # dispersion[i,1,:] = xsref1[:,0]
-    # dispersion[i,2,:] = xsref1[:,1]
-    # dispersion[i,3,:] = xsref1[:,2]
-    #
-    # # eliminates the points with a too large error
-    # for j in np.arange(0,Nkys):
-    #     if dispersion[i,3,j]>0.5 :
-    #         dispersion[i,1,j] = 1e-12
-    #         dispersion[i,2,j] = 1e-12
-
 
 
     # plot
@@ -167,6 +134,7 @@ for i,kz in enumerate(kzetas):
     plt.grid()
     # plt.plot(kysref1, dispersion[i,1,:], "green", label="$\omega_r$ solver")
     plt.plot(kysref1, dispersion[i,2,:], "magenta", label="$\gamma$ solver")
+    plt.plot(ky_1,gamma_1,"--")
     plt.xlabel("Azimuthal wave number $k_{\\theta} \\lambda_{De}$")
     plt.ylabel("Pulsations  $\\gamma/\\omega_{pi} $")
     plt.tight_layout()
@@ -187,6 +155,8 @@ for i,kz in enumerate(kzetas):
     plt.title("kz={:5.4f}".format(kz))
     plt.grid()
     plt.plot(kysref1, dispersion[i,1,:], "green", label="$\omega$ solver")
+    plt.plot(ky_1,omega_1,"--")
+    plt.plot()
     plt.xlabel("Azimuthal wave number $k_{\\theta} \\lambda_{De}$")
     plt.ylabel("Pulsations $ \\omega_r/\\omega_{pi} $")
     plt.tight_layout()
@@ -198,6 +168,18 @@ for i,kz in enumerate(kzetas):
     plt.savefig(path + current + "/images_dispersion/dispersion_kz={:5.4f}_omega.png".format(kz))
     plt.close()
 
+    ky_1 = dispersion[i,0,:]
+    omega_1 = dispersion[i,1,:]
+    gamma_1 = dispersion[i,2,:]
+    argmax_1 = np.argmax(gamma_1)
+    # print("max : ", argmax_1, gamma_1[argmax_1])
+    cont = 0
+    for j in np.arange(0,argmax_1):
+        if gamma_1[j-cont]<1e-8 :
+            ky_1 = np.delete(ky_1,j-cont)
+            omega_1 = np.delete(omega_1,j-cont)
+            gamma_1 = np.delete(gamma_1,j-cont)
+            cont = cont+1
 
 
     plt.figure(figsize=(6,5))
@@ -210,7 +192,7 @@ for i,kz in enumerate(kzetas):
         plt.plot(kysref1[i],abs(plasmaEps(omg=xsref1[i,0]+1j * xsref1[i,1],kx=0.0,kz=kz,ky=kysref1[i])),'o',color='blue')
     plt.savefig(path + current + "/images_dispersion/error_kz={:5.4f}".format(kz) + ".png")
     plt.close()
-
+    # break
 f = open(path + current + "/ky.txt","w+")
 for i in range(len(kysref1)):
     f.write(str(kysref1[i]) + "  ")

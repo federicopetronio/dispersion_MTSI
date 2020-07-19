@@ -159,10 +159,13 @@ def solvekys(costFunc, kx, kz, kymin=0.01, kymax = 2, Nkys= 100, method="Nelder-
 
         for i,ky in enumerate(kys):
             DS.setks(kx, ky, kz)
+            # print("DS.x0",DS.x0)
             x0 = DS.solve()
+            # print("ky, omega, gamma",ky, x0[:2])
             xs[i,:] = x0
             if already_solved:
                 DS.set_x0([wrfunct(ky).real,wrfunct(ky).imag])
+                # print(DS.x0)
             else:
                 DS.set_x0(x0)
 

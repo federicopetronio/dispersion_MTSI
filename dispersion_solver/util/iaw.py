@@ -2,6 +2,7 @@ from plasmapy.formulary.dispersionfunction import plasma_dispersion_func
 from .parameters import PlasmaParameters
 import numpy as np
 from numpy import loadtxt
+import matplotlib as plt
 
 "Normalized permittivity"
 
@@ -81,34 +82,45 @@ def precedent_guess_mod(k, ky,ome,gam):
     kappa = ky
     omega = ome
     gamma = gam
+    solution_prec = 1e-12+1j*1e-12
     for index,ka in enumerate(kappa) :
         if ka >= k :
             solution_prec = complex(omega[index],gamma[index])
             break
     return solution_prec
 
-def precedent_openfile(k,kz):
+def precedent_openfile(kz,Nkys):
     path = '/home/petronio/Nextcloud/theseLPP/runs/runs_benchmark/MTSI/dispersion_MTSI/dispersion_solver/dispersion_data/general_results/'
     # kappa = np.genfromtxt(path + "ky.txt", delimiter="  ")
-    if kz < 0.0099:
-        start = 0.001
-        stop = 0.1
-        steps = 500
-        kappa = np.arange(start,stop,(stop-start)/steps)
-    else:
-        start = 0.001
-        stop = 0.12
-        steps = 500
-        kappa = np.arange(start,stop,(stop-start)/steps)
+    # if kz < 0.0099:
+    #     start = 0.001
+    #     stop = 0.1
+    #     steps = 500
+    #     kappa = np.arange(start,stop,(stop-start)/steps)
+    # else:
 
-    # print(kappa[:10])
-    omega = np.genfromtxt(path + "kz={:5.4f}".format(kz) + "_omega_r.txt", delimiter="  ", unpack=False)
-    # print(omega[:10])
-    gamma = np.genfromtxt(path + "kz={:5.4f}".format(kz) + "_gamma.txt", delimiter="  ", unpack=False)
+    omega_read = np.genfromtxt(path + "kz={:5.4f}".format(kz) + "_omega_r.txt", delimiter="  ", unpack=False)
+    gamma_read = np.genfromtxt(path + "kz={:5.4f}".format(kz) + "_gamma.txt", delimiter="  ", unpack=False)
+
+    omega = np.ones(Nkys)*1e-12
+    gamma = np.ones(Nkys)*1e-12
+
+    omega[:len(omega_read)] = omega_read
+    gamma[:len(gamma_read)] = gamma_read
+
+    start = 0.001
+    stop = 0.16
+    # steps = 668+84+84+84
+    kappa = np.arange(start,stop,(stop-start)/len(gamma_read))
+    # print("kappa",len(gamma_read),kappa)
+
     # print(gamma[:10])
-    solution_prec = omega[-1]+1j*gamma[-1]
-    for index,ka in enumerate(kappa) :
-        if ka >= k :
-            solution_prec = complex(omega[index],gamma[index])
-            break
-    return solution_prec
+    # solution_prec = 1e-12+1j*1e-12
+    # for index,ka in enumerate(kappa) :
+    #     if ka+0.00001 >= k :
+    #         if index < len(omega):
+    #             solution_prec = complex(omega[index],gamma[index])
+    #         # print(k,ka, solution_prec)
+    #         break
+    # print(k,ka, solution_prec)
+    return omega, gamma
