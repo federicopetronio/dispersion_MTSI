@@ -43,7 +43,13 @@ try:
     os.mkdir(sentierino + "/dispersion_data")
 except:
     print("already existing folder dispersion_data")
-path = sentierino + "/dispersion_data/"
+try:
+    os.mkdir(sentierino + "/dispersion_data/all_data")
+except:
+    print("already existing folder dispersion_data/all_data")
+
+
+path = sentierino + "/dispersion_data/all_data/"
 # path = "/home/petronio/Nextcloud/theseLPP/runs/runs_benchmark/MTSI/dispersion_MTSI/dispersion_solver/dispersion_data/"
 print(path)
 
@@ -71,14 +77,19 @@ f.close()
 # kz = 0.005550
 # kz = 0.001
 print("kz * lambda_d = ",kz)
-Nkys = 668+84+84+84
 kymin = 0.001
-kymax = 0.22
+kymax = 0.14
+
+pas = 0.00023803827751196175
+
+Nkys = (kymax-kymin)/pas
+Nkys = int(Nkys)
+
 # kapa = np.arange(kymin,kymax,(kymax-kymin)/Nkys)
 
 plasmaEps = partial(eps_MTSI, prt=prt) #assign to the function eps_MTSI the value of prt from now on
 primo = True
-kzetas = np.arange(0.0559,0.0600,0.0004)
+kzetas = np.arange(0.001,0.011,0.0001)
 # kzetas = [0.0447,0.0447,0.0447]
 dispersion = np.zeros((len(kzetas),4,Nkys))
 dispersion_clean = np.zeros((len(kzetas),4,Nkys))

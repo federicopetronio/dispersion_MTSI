@@ -12,7 +12,7 @@ ax1.set_xlabel("kz $\lambda_D$")
 ax1.set_ylabel('ky $\lambda_D$ max', color='blue')
 ax2 = ax1.twinx()
 ax2.set_ylabel('$\gamma / \omega_{pi}$', color='red')
-kzetas = np.arange(0.0011,0.0155,0.0001)
+kzetas = np.arange(0.0011,0.055,0.0004)
 for kz in kzetas:
     kap,ome,gam = find_max_gamma(kz)
     ax1.plot(kz,kap,'*',color="blue")

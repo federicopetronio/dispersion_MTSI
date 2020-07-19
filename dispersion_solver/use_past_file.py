@@ -27,7 +27,7 @@ mi = 131*m_p.value
 
 from util.parameters import PlasmaParameters
 Te = 10*u.eV
-plasmaDensity=1e17 *u.m**(-3)
+plasmaDensity=5e16 *u.m**(-3)
 pp = PlasmaParameters(plasmaDensity=plasmaDensity, electronTemperature=Te)
 
 #~~~~~~~~~~~~~~~~~~~~~~
@@ -40,7 +40,13 @@ try:
     os.mkdir(sentierino + "/dispersion_data")
 except:
     print("already existing folder dispersion_data")
-path = sentierino + "/dispersion_data/"
+try:
+    os.mkdir(sentierino + "/dispersion_data/all_data")
+except:
+    print("already existing folder dispersion_data/all_data")
+
+
+path = sentierino + "/dispersion_data/all_data/"
 # path = "/home/petronio/Nextcloud/theseLPP/runs/runs_benchmark/MTSI/dispersion_MTSI/dispersion_solver/dispersion_data/"
 print(path)
 
@@ -54,7 +60,10 @@ prt=PlasmaParameters(plasmaDensity=plasmaDensity,
 Lr = 0.0128*u.m
 kz = 2*np.pi*prt.Debye_length/Lr
 
-kzetas = [0.0551,0.0551]
+# kzetas = np.ones(2)*kz
+kzetas = [0.0259,0.0259]
+
+
 current = "kz={:.4f}".format(kzetas[0])
 try:
     os.mkdir(path + current)
@@ -77,10 +86,17 @@ f.close()
 # kz = 0.005550
 # kz = 0.001
 print("kz * lambda_d = ",kz)
-Nkys = 668+84+84
 kymin = 0.001
 kymax = 0.20
-# kapa = np.arange(kymin,kymax,(kymax-kymin)/Nkys)
+
+
+if kz < 0.0099:
+    pas = 0.000198
+else:
+    pas = 0.00023803827751196175
+
+Nkys = (kymax-kymin)/pas
+Nkys = int(Nkys)
 
 plasmaEps = partial(eps_MTSI, prt=prt) #assign to the function eps_MTSI the value of prt from now on
 primo = True
@@ -94,11 +110,12 @@ dispersion_clean = np.zeros((len(kzetas),4,Nkys))
 
 for i,kz in enumerate(kzetas):
     print("kz * lambda_d = ",kz)
+
     # different first guess
     # USE ONLY WITH kymin=0.01, kymax=2, Nkys=200
     if primo:
         omega_1, gamma_1 = precedent_openfile(kz=kz,Nkys=Nkys)
-        ky_1 = np.arange(kymin,kymax,(kymax-kymin)/Nkys)
+        ky_1 = np.arange(kymin,kymax,pas)
         primo = False
 
     wrfunct = lambda k: precedent_guess_mod(k=k,ky=ky_1,ome=omega_1,gam=gamma_1)
@@ -192,7 +209,7 @@ for i,kz in enumerate(kzetas):
         plt.plot(kysref1[i],abs(plasmaEps(omg=xsref1[i,0]+1j * xsref1[i,1],kx=0.0,kz=kz,ky=kysref1[i])),'o',color='blue')
     plt.savefig(path + current + "/images_dispersion/error_kz={:5.4f}".format(kz) + ".png")
     plt.close()
-    # break
+    break
 f = open(path + current + "/ky.txt","w+")
 for i in range(len(kysref1)):
     f.write(str(kysref1[i]) + "  ")

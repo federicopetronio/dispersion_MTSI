@@ -98,8 +98,13 @@ def precedent_openfile(kz,Nkys):
     #     steps = 500
     #     kappa = np.arange(start,stop,(stop-start)/steps)
     # else:
+    while True:
+        try :
+            omega_read = np.genfromtxt(path + "kz={:5.4f}".format(kz) + "_omega_r.txt", delimiter="  ", unpack=False)
+            break
+        except :
+            kz = kz + 0.0001
 
-    omega_read = np.genfromtxt(path + "kz={:5.4f}".format(kz) + "_omega_r.txt", delimiter="  ", unpack=False)
     gamma_read = np.genfromtxt(path + "kz={:5.4f}".format(kz) + "_gamma.txt", delimiter="  ", unpack=False)
 
     omega = np.ones(Nkys)*1e-12

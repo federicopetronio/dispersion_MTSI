@@ -1,3 +1,5 @@
 .idea
 .ipynb_checkpoints
-dispersion_solver/dispersion_data/
+dispersion_solver/dispersion_data/all_data
+
+dispersion_solver/dispersion_data/general_results/images_dispersion/
