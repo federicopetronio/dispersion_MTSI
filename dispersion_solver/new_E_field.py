@@ -28,7 +28,7 @@ mi = 131*m_p.value
 from util.parameters import PlasmaParameters
 Te = 10*u.eV
 plasmaDensity=5e16 *u.m**(-3)
-electricField = 2e4*u.V/u.m
+electricField = 1.5e4*u.V/u.m
 pp = PlasmaParameters(plasmaDensity=plasmaDensity, electronTemperature=Te)
 
 #~~~~~~~~~~~~~~~~~~~~~~
@@ -67,7 +67,7 @@ prt=PlasmaParameters(plasmaDensity=plasmaDensity,
 Lr = 0.0128*u.m
 kz = 2*np.pi*prt.Debye_length/Lr
 
-kzetas = np.arange(0.001,0.051,0.002)
+kzetas = np.arange(0.001,0.050,0.002)
 
 
 try:
@@ -139,12 +139,30 @@ for i,kz in enumerate(kzetas):
 
 
 
+
+    ky_1 = dispersion[i,0,:]
+    omega_1 = dispersion[i,1,:]
+    gamma_1 = dispersion[i,2,:]
+    argmax_1 = np.argmax(gamma_1)
+    # print("max : ", argmax_1, gamma_1[argmax_1])
+    cont = 0
+    for j in np.arange(0,Nkys):
+        if j<argmax_1:
+            if gamma_1[j-cont]<1e-8 :
+                ky_1 = np.delete(ky_1,j-cont)
+                omega_1 = np.delete(omega_1,j-cont)
+                gamma_1 = np.delete(gamma_1,j-cont)
+                cont = cont+1
+        else:
+            if gamma_1[j-cont]<0 :
+                gamma_1[j-cont] = -gamma_1[j-cont]
+
     # plot
     fig = plt.figure(figsize=(6,5))
     plt.title("kz={:5.4f}".format(kz))
     plt.grid()
     # plt.plot(kysref1, dispersion[i,1,:], "green", label="$\omega_r$ solver")
-    plt.plot(kysref1, dispersion[i,2,:], "magenta", label="$\gamma$ solver")
+    plt.plot(kysref1, abs(dispersion[i,2,:]), "magenta", label="$\gamma$ solver")
     plt.plot(ky_1,gamma_1,"--")
     plt.xlabel("Azimuthal wave number $k_{\\theta} \\lambda_{De}$")
     plt.ylabel("Pulsations  $\\gamma/\\omega_{pi} $")
@@ -153,8 +171,8 @@ for i,kz in enumerate(kzetas):
         if dispersion[i,3,j]>0.5 :
             plt.plot(kysref1[j], dispersion[i,2,j], "*",color="blue")
 
-    #plt.xlim(left=0)
-    #plt.ylim(bottom=0)
+            #plt.xlim(left=0)
+            #plt.ylim(bottom=0)
     plt.legend()
     plt.tight_layout()
     plt.savefig(path2   + "/images_dispersion/dispersion_kz={:5.4f}_gamma.png".format(kz))
@@ -178,20 +196,6 @@ for i,kz in enumerate(kzetas):
     plt.tight_layout()
     plt.savefig(path2   + "/images_dispersion/dispersion_kz={:5.4f}_omega.png".format(kz))
     plt.close()
-
-    ky_1 = dispersion[i,0,:]
-    omega_1 = dispersion[i,1,:]
-    gamma_1 = dispersion[i,2,:]
-    argmax_1 = np.argmax(gamma_1)
-    # print("max : ", argmax_1, gamma_1[argmax_1])
-    cont = 0
-    for j in np.arange(0,argmax_1):
-        if gamma_1[j-cont]<1e-8 :
-            ky_1 = np.delete(ky_1,j-cont)
-            omega_1 = np.delete(omega_1,j-cont)
-            gamma_1 = np.delete(gamma_1,j-cont)
-            cont = cont+1
-
 
     plt.figure(figsize=(6,5))
     plt.semilogy(kysref1, xsref1[:,2], "magenta")

@@ -89,8 +89,10 @@ def precedent_guess_mod(k, ky,ome,gam):
             break
     return solution_prec
 
-def precedent_openfile(kz,Nkys):
-    path = '/home/petronio/Nextcloud/theseLPP/runs/runs_benchmark/MTSI/dispersion_MTSI/dispersion_solver/dispersion_data/general_results/'
+def precedent_openfile(kz,Nkys,path=None):
+    if path == None:
+        path = '/home/petronio/Nextcloud/theseLPP/runs/runs_benchmark/MTSI/dispersion_MTSI/dispersion_solver/dispersion_data/general_results/'
+
     # kappa = np.genfromtxt(path + "ky.txt", delimiter="  ")
     # if kz < 0.0099:
     #     start = 0.001
@@ -106,6 +108,8 @@ def precedent_openfile(kz,Nkys):
             break
         except :
             kz = kz + 0.0001
+            # print(path + "kz={:5.4f}".format(kz) + "_omega_r.txt")
+            # break
 
     gamma_read = np.genfromtxt(path + "kz={:5.4f}".format(kz) + "_gamma.txt", delimiter="  ", unpack=False)
 

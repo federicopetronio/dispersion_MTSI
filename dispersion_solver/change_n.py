@@ -27,7 +27,7 @@ mi = 131*m_p.value
 
 from util.parameters import PlasmaParameters
 Te = 10*u.eV
-plasmaDensity=1e17 *u.m**(-3)
+plasmaDensity=5e16 *u.m**(-3)
 pp = PlasmaParameters(plasmaDensity=plasmaDensity, electronTemperature=Te)
 
 #~~~~~~~~~~~~~~~~~~~~~~
@@ -102,12 +102,13 @@ primo = True
 dispersion = np.zeros((len(kzetas),4,Nkys))
 dispersion_clean = np.zeros((len(kzetas),4,Nkys))
 
-
-
+# path3 = sentierino + "/dispersion_data/change_n/{:}/".format(1e17)
+# print(path3)
+# print("/home/petronio/Nextcloud/theseLPP/runs/runs_benchmark/MTSI/dispersion_MTSI/dispersion_solver/dispersion_data/change_n/1e+17/")
 for i,kz in enumerate(kzetas):
     print("kz * lambda_d = ",kz)
 
-    omega_1, gamma_1 = precedent_openfile(kz=kz,Nkys=Nkys)
+    omega_1, gamma_1 = precedent_openfile(kz=kz,Nkys=Nkys,path="/home/petronio/Nextcloud/theseLPP/runs/runs_benchmark/MTSI/dispersion_MTSI/dispersion_solver/dispersion_data/change_n/2e+17/")
     ky_1 = np.arange(kymin,kymax,pas)
     # primo = False
 

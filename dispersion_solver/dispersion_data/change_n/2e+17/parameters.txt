@@ -1,0 +1,10 @@
+plasma density: 2e+17 1 / m3
+
+Te: 10.0 eV
+
+Ti: 0.5 eV
+
+E field: 10000.0 V / m
+
+B field: 0.02 T
+
