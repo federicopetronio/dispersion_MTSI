@@ -107,8 +107,8 @@ def precedent_openfile(kz,Nkys,path=None):
             print("kz_open : {:.4f}".format(kz) )
             break
         except :
+            print(path + "kz={:5.4f}".format(kz) + "_omega_r.txt")
             kz = kz + 0.0001
-            # print(path + "kz={:5.4f}".format(kz) + "_omega_r.txt")
             # break
 
     gamma_read = np.genfromtxt(path + "kz={:5.4f}".format(kz) + "_gamma.txt", delimiter="  ", unpack=False)
@@ -119,19 +119,4 @@ def precedent_openfile(kz,Nkys,path=None):
     omega[:len(omega_read)] = omega_read
     gamma[:len(gamma_read)] = gamma_read
 
-    start = 0.001
-    stop = 0.16
-    # steps = 668+84+84+84
-    # kappa = np.arange(start,stop,(stop-start)/len(gamma_read))
-    # print("kappa",len(gamma_read),kappa)
-
-    # print(gamma[:10])
-    # solution_prec = 1e-12+1j*1e-12
-    # for index,ka in enumerate(kappa) :
-    #     if ka+0.00001 >= k :
-    #         if index < len(omega):
-    #             solution_prec = complex(omega[index],gamma[index])
-    #         # print(k,ka, solution_prec)
-    #         break
-    # print(k,ka, solution_prec)
     return omega, gamma

@@ -1,4 +1,4 @@
-from astropy import units as u  
+from astropy import units as u
 from plasmapy.formulary.parameters import plasma_frequency, Debye_length
 
 import directsolver
@@ -78,7 +78,7 @@ f.close()
 # kz = 0.001
 print("kz * lambda_d = ",kz)
 kymin = 0.001
-kymax = 0.14
+kymax = 0.20
 
 pas = 0.00023803827751196175
 

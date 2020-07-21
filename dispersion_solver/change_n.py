@@ -108,7 +108,8 @@ dispersion_clean = np.zeros((len(kzetas),4,Nkys))
 for i,kz in enumerate(kzetas):
     print("kz * lambda_d = ",kz)
 
-    omega_1, gamma_1 = precedent_openfile(kz=kz,Nkys=Nkys,path="/home/petronio/Nextcloud/theseLPP/runs/runs_benchmark/MTSI/dispersion_MTSI/dispersion_solver/dispersion_data/change_n/2e+17/")
+    # omega_1, gamma_1 = precedent_openfile(kz=kz,Nkys=Nkys,path="/home/petronio/Nextcloud/theseLPP/runs/runs_benchmark/MTSI/dispersion_MTSI/dispersion_solver/dispersion_data/change_n/2e+17/")
+    omega_1, gamma_1 = precedent_openfile(kz=kz,Nkys=Nkys)
     ky_1 = np.arange(kymin,kymax,pas)
     # primo = False
 
