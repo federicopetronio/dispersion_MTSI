@@ -1,4 +1,4 @@
-from astropy import units as u
+from astropy import units as u  
 from plasmapy.formulary.parameters import plasma_frequency, Debye_length
 
 import directsolver

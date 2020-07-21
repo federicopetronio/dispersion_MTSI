@@ -61,7 +61,7 @@ Lr = 0.0128*u.m
 kz = 2*np.pi*prt.Debye_length/Lr
 
 # kzetas = np.ones(2)*kz
-kzetas = [0.0259,0.0259]
+kzetas = [0.0516,0.0516]
 
 
 current = "kz={:.4f}".format(kzetas[0])
@@ -89,11 +89,7 @@ print("kz * lambda_d = ",kz)
 kymin = 0.001
 kymax = 0.20
 
-
-if kz < 0.0099:
-    pas = 0.000198
-else:
-    pas = 0.00023803827751196175
+pas = 0.00023803827751196175
 
 Nkys = (kymax-kymin)/pas
 Nkys = int(Nkys)
@@ -152,6 +148,7 @@ for i,kz in enumerate(kzetas):
     # plt.plot(kysref1, dispersion[i,1,:], "green", label="$\omega_r$ solver")
     plt.plot(kysref1, dispersion[i,2,:], "magenta", label="$\gamma$ solver")
     plt.plot(ky_1,gamma_1,"--")
+    plt.plot(0.207,0.032,'*',label="LPPic")
     plt.xlabel("Azimuthal wave number $k_{\\theta} \\lambda_{De}$")
     plt.ylabel("Pulsations  $\\gamma/\\omega_{pi} $")
     plt.tight_layout()
@@ -205,11 +202,11 @@ for i,kz in enumerate(kzetas):
     plt.title("Error in the solution")
     plt.grid(True)
     plt.ylabel("Pulsations  $\\gamma/\\omega_{pi}$ and $ \\omega_r/\\omega_{pi} $")
-    for i in np.arange(0,Nkys,20):
-        plt.plot(kysref1[i],abs(plasmaEps(omg=xsref1[i,0]+1j * xsref1[i,1],kx=0.0,kz=kz,ky=kysref1[i])),'o',color='blue')
+    for ii in np.arange(0,Nkys,20):
+        plt.plot(kysref1[ii],abs(plasmaEps(omg=xsref1[ii,0]+1j * xsref1[ii,1],kx=0.0,kz=kz,ky=kysref1[ii])),'o',color='blue')
     plt.savefig(path + current + "/images_dispersion/error_kz={:5.4f}".format(kz) + ".png")
     plt.close()
-    break
+
 f = open(path + current + "/ky.txt","w+")
 for i in range(len(kysref1)):
     f.write(str(kysref1[i]) + "  ")

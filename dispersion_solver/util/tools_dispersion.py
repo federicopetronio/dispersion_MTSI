@@ -18,18 +18,19 @@ def open_disp_file(kz):
 def find_max_gamma(kz):
     kappa,omega,gamma = open_disp_file(kz)
     max_ind = np.argmax(gamma)
-    print(kz,max_ind)
-    if kz < 0.0099:
-        start = 0.001
-        stop = 0.1
-        steps = 500
-        kapa = np.arange(start,stop,(stop-start)/steps)
-    else:
-        start = 0.001
-        stop = 0.22
-        pas = 0.00023803827751196175
+    # if kz < 0.0099:
+    #     start = 0.001
+    #     stop = 0.1
+    #     steps = 500
+    #     kapa = np.arange(start,stop,(stop-start)/steps)
+    # else:
+    start = 0.001
+    stop = 0.22
+    pas = 0.00023803827751196175
 
-        kapa = np.arange(start,stop,pas)
+    kapa = np.arange(start,stop,pas)
+    print(kz,kapa[max_ind],omega[max_ind],gamma[max_ind])
+
     return kapa[max_ind],omega[max_ind],gamma[max_ind]
 
 def verification_dispersion(kz):
