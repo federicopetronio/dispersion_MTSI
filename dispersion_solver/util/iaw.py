@@ -107,7 +107,7 @@ def precedent_openfile(kz,Nkys,path=None):
             print("kz_open : {:.4f}".format(kz) )
             break
         except :
-            print(path + "kz={:5.4f}".format(kz) + "_omega_r.txt")
+            # print(path + "kz={:5.4f}".format(kz) + "_omega_r.txt")
             kz = kz + 0.0001
             # break
 

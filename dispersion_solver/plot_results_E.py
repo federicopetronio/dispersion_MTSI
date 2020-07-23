@@ -4,6 +4,8 @@ from plasmapy.formulary.parameters import plasma_frequency, Debye_length
 import directsolver
 import os
 
+from matplotlib import rc
+
 from functools import partial
 from importlib import reload
 
@@ -17,6 +19,8 @@ from directsolver import solvekys
 from scipy import optimize
 
 import matplotlib.pyplot as plt
+plt.rc('text', usetex=True)
+plt.rc('font', family='serif')
 import numpy as np
 from astropy.constants import m_e, m_p
 me = m_e.value
@@ -61,7 +65,7 @@ for ind,den in enumerate(E_field):
 
     # plt.plot(kysref1, dispersion[i,1,:], "green", label="$\omega_r$ solver")
     # plt.plot(kysref1, dispersion[i,2,:], "magenta", label="$\gamma$ solver")
-    plt.plot(kys,abs(gamma1),label = "n = {:}".format(den)+" V/m")
+    plt.plot(kys,abs(gamma1),label = "E = {:}".format(den)+" V/m")
     plt.xlabel("Azimuthal wave number $k_{\\theta} \\lambda_{De}$")
     plt.ylabel("Pulsations  $\\gamma/\\omega_{pi} $")
     plt.tight_layout()

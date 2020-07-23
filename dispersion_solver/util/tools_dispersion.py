@@ -7,8 +7,9 @@ import matplotlib.pyplot as plt
 
 
 
-def open_disp_file(kz):
-    path = '/home/petronio/Nextcloud/theseLPP/runs/runs_benchmark/MTSI/dispersion_MTSI/dispersion_solver/dispersion_data/general_results/'
+def open_disp_file(kz, path = None):
+    if path == None:
+        path = '/home/petronio/Nextcloud/theseLPP/runs/runs_benchmark/MTSI/dispersion_MTSI/dispersion_solver/dispersion_data/general_results/'
     kappa = np.genfromtxt(path + "ky.txt", delimiter="  ")
     omega = np.genfromtxt(path + "kz={:5.4f}".format(kz) + "_omega_r.txt", delimiter="  ", unpack=False)
     gamma = np.genfromtxt(path + "kz={:5.4f}".format(kz) + "_gamma.txt", delimiter="  ", unpack=False)
@@ -39,22 +40,22 @@ def verification_dispersion(kz):
     from astropy import units as u
 
     Te = 10*u.eV
-    plasmaDensity=5e16 *u.m**(-3)
+    plasmaDensity=2e17 *u.m**(-3)
     pp = PlasmaParameters(plasmaDensity=plasmaDensity, electronTemperature=Te)
 
 
-    prt=PlasmaParameters(plasmaDensity=5e16/u.m**3,
+    prt=PlasmaParameters(plasmaDensity=plasmaDensity,
                         electronTemperature=10*u.eV,
                         magneticField=0.02*u.T,
                         electricField=1e4*u.V/u.m,
                         ionTemperature=0.5*u.eV)
 
     kx = 0.0
-    kappa,omega,gamma = open_disp_file(kz)
+    kappa,omega,gamma = open_disp_file(kz,path = "/home/petronio/Nextcloud/theseLPP/runs/runs_benchmark/MTSI/dispersion_MTSI/dispersion_solver/dispersion_data/change_n/2e+17/")
     ky,ome,gam = find_max_gamma(kz)
 
-    gioco_omega = np.arange(0.9*ome,1.1*ome,0.005)
-    gioco_gamma = np.arange(0.9*gam,1.1*gam,0.005)
+    gioco_omega = np.arange(0.5*ome,1.5*ome,0.005)
+    gioco_gamma = np.arange(0.5*gam,1.5*gam,0.005)
 
     solution_real = np.zeros((len(gioco_omega),len(gioco_gamma)))
     solution_imag = np.zeros((len(gioco_omega),len(gioco_gamma)))
