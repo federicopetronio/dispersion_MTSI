@@ -10,7 +10,7 @@ from importlib import reload
 reload(directsolver)
 import util
 reload(util)
-from util.MTSI  import eps_MTSI
+from util.MTSI_unnorm  import eps_MTSI_unnorm
 from util.iaw import eps_IAW, analytic_IAW, analytic_IAW_simple,first_guess,first_guess_1,precedent_guess
 from directsolver import solvekys
 from scipy import optimize
@@ -25,7 +25,7 @@ mi = 131*m_p.value
 
 from util.parameters import PlasmaParameters
 Te = 10*u.eV
-plasmaDensity=2e17 *u.m**(-3)
+plasmaDensity=5e16 *u.m**(-3)
 pasmaD = plasmaDensity*u.m**(3)
 pp = PlasmaParameters(plasmaDensity=plasmaDensity, electronTemperature=Te)
 
@@ -51,8 +51,8 @@ path = sentierino + "/dispersion_data/2Dmap/"
 print(path)
 
 kx = 0.0
-ky = 0.0268
-kz = 0.001
+ky = 1098
+kz = 180
 
 prt=PlasmaParameters(plasmaDensity=plasmaDensity,
                      electronTemperature=10*u.eV,
@@ -61,16 +61,17 @@ prt=PlasmaParameters(plasmaDensity=plasmaDensity,
                      ionTemperature=0.5*u.eV)
 
 
-gioco_omega = np.arange(0.001,0.5,0.003)
-gioco_gamma = np.arange(-0.005,0.1,0.0005)
+gioco_omega = np.arange(12019520,12019530,0.05)
+gioco_gamma = np.arange(19911481,19911487,0.05)
 # gioco_gamma = np.arange(0.02,3,0.01)
 # gioco_omega = np.arange(0.01,3,0.01)
+
+print(gioco_omega)
 
 
 solution_real = np.zeros((len(gioco_omega),len(gioco_gamma)))
 solution_imag = np.zeros((len(gioco_omega),len(gioco_gamma)))
-plasmaEps = partial(eps_MTSI, prt=prt) #assign to the function eps_MTSI the value of prt from now on
-
+plasmaEps = partial(eps_MTSI_unnorm, prt=prt) #assign to the function eps_MTSI the value of prt from now on
 for i,omega in enumerate(gioco_omega) :
     for j,gamma in enumerate(gioco_gamma) :
         # solution[i,j] = plasmaEps(omg=omega+1j*gamma,kx=0.0,kz=kz,ky=ky)

@@ -84,6 +84,7 @@ for ind,den in enumerate(density):
     gamma_1 = gamma1 * omega_pi
     print(omega1[np.argmax(gamma1)]* omega_pi)
     print(gamma1[np.argmax(gamma1)]* omega_pi)
+    print(kys[np.argmax(gamma1)]/prt.Debye_length,kz/prt.Debye_length)
 
 
     kys_denorm = kys/prt.Debye_length
