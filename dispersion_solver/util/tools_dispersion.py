@@ -32,13 +32,11 @@ def precedent_openfile(kz,Nkys=836,path=None):
     Nkys = (kymax-kymin)/pas
     Nkys = int(Nkys)
     kappa = np.arange(kymin,kymax,pas)
-    print("path to open",path)
     print("kz : {:.4f}".format(kz) )
     while True:
         try :
             omega_read = np.genfromtxt(path + "kz={:5.4f}".format(kz) + "_omega_r.txt", delimiter="  ", unpack=False)
             print("kz_open : {:.4f}".format(kz) )
-            print(path + "kz={:5.4f}".format(kz) + "_omega_r.txt")
             break
         except :
             # print(path + "kz={:5.4f}".format(kz) + "_omega_r.txt")
@@ -59,7 +57,7 @@ def precedent_openfile(kz,Nkys=836,path=None):
 def find_max_gamma(kz,path=None):
     if path == None:
         path = '/home/petronio/Nextcloud/theseLPP/runs/runs_benchmark/MTSI/dispersion_MTSI/dispersion_solver/dispersion_data/general_results/'
-    print("find_max_gamma", path)
+
     kappa,omega,gamma = precedent_openfile(kz,path=path)
     max_ind = np.argmax(gamma)
 
@@ -100,9 +98,9 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
 
     ky,ome,gam = find_max_gamma(kz,path=path)
 
-    plt.figure()
-    plt.plot(kappa,gamma)
-    plt.plot(ky/prt.Debye_length,gam*prt.ionPlasmaFrequency,'o')
+    # plt.figure()
+    # plt.plot(kappa,gamma)
+    # plt.plot(ky/prt.Debye_length,gam*prt.ionPlasmaFrequency,'o')
 
     print(ky/prt.Debye_length)
     gioco_omega = np.arange(0.8*ome,1.2*ome,0.005)
@@ -112,8 +110,8 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
     if unnorm:
         ky = ky/prt.Debye_length
         kz = kz/prt.Debye_length
-        gioco_omega = np.arange(0.7*ome,1.3*ome,0.005)*prt.ionPlasmaFrequency
-        gioco_gamma = np.arange(0.7*gam,1.3*gam,0.005)*prt.ionPlasmaFrequency
+        gioco_omega = np.arange(0.5*ome,2*ome,0.008)*prt.ionPlasmaFrequency
+        gioco_gamma = np.arange(0.5*gam,2*gam,0.008)*prt.ionPlasmaFrequency
         ome = ome*prt.ionPlasmaFrequency
         gam = gam*prt.ionPlasmaFrequency
         kyons = kyons/prt.Debye_length
@@ -153,7 +151,7 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
 
     plt.figure(figsize=(6,5))
     plt.title("density {:}".format(plasmaDensity))
-    plt.plot(kappa,gamma, label="solver solution")
+    plt.plot(kappa,abs(gamma), label="solver solution")
     plt.plot(kyons[0],gioco_gamma[int(max_pos[0,1])],'o',color='blue',label = "computed solution")
     plt.plot(kyons[1],gioco_gamma[int(max_pos[1,1])],'o',color='blue')
     plt.plot(kyons[2],gioco_gamma[int(max_pos[2,1])],'o',color='blue')
@@ -166,18 +164,18 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
     plt.legend()
 
 
-    plt.figure(figsize=(6,5))
-    plt.plot(kappa,omega, label="solver solution")
-    plt.title("density {:}".format(plasmaDensity))
-    plt.plot(kyons[0],gioco_omega[int(max_pos[0,0])],'*',color='blue',label = "computed solution")
-    plt.plot(kyons[1],gioco_omega[int(max_pos[1,0])],'*',color='blue')
-    plt.plot(kyons[2],gioco_omega[int(max_pos[2,0])],'*',color='blue')
-    plt.xlabel("Azimuthal wave number $k_{\\theta} \\lambda_{De}$")
-    plt.ylabel("Pulsations  $\\omega/\\omega_{pi}$ ")
-    if unnorm:
-        plt.xlabel("Azimuthal wave number $k_{\\theta}$")
-        plt.ylabel("Pulsations  $\\omega$ ")
-    plt.legend()
-    # plt.show()
+    # plt.figure(figsize=(6,5))
+    # plt.plot(kappa,omega, label="solver solution")
+    # plt.title("density {:}".format(plasmaDensity))
+    # plt.plot(kyons[0],gioco_omega[int(max_pos[0,0])],'*',color='blue',label = "computed solution")
+    # plt.plot(kyons[1],gioco_omega[int(max_pos[1,0])],'*',color='blue')
+    # plt.plot(kyons[2],gioco_omega[int(max_pos[2,0])],'*',color='blue')
+    # plt.xlabel("Azimuthal wave number $k_{\\theta} \\lambda_{De}$")
+    # plt.ylabel("Pulsations  $\\omega/\\omega_{pi}$ ")
+    # if unnorm:
+    #     plt.xlabel("Azimuthal wave number $k_{\\theta}$")
+    #     plt.ylabel("Pulsations  $\\omega$ ")
+    # plt.legend()
+
     print(density,ky,kz)
     return max_pos
