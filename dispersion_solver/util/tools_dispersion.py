@@ -16,8 +16,8 @@ def open_disp_file(kz, path = None):
     return kappa,omega,gamma
 
 
-def find_max_gamma(kz):
-    kappa,omega,gamma = open_disp_file(kz)
+def find_max_gamma(kz,path=None):
+    kappa,omega,gamma = open_disp_file(kz,path)
     max_ind = np.argmax(gamma)
     # if kz < 0.0099:
     #     start = 0.001
@@ -39,8 +39,9 @@ def verification_dispersion(kz):
     from astropy.constants import m_e, m_p
     from astropy import units as u
 
+    path = "/home/petronio/Nextcloud/theseLPP/runs/runs_benchmark/MTSI/dispersion_MTSI/dispersion_solver/dispersion_data/change_n/5e+16/"
     Te = 10*u.eV
-    plasmaDensity=2e17 *u.m**(-3)
+    plasmaDensity=5e16 *u.m**(-3)
     pp = PlasmaParameters(plasmaDensity=plasmaDensity, electronTemperature=Te)
 
 
@@ -51,11 +52,11 @@ def verification_dispersion(kz):
                         ionTemperature=0.5*u.eV)
 
     kx = 0.0
-    kappa,omega,gamma = open_disp_file(kz,path = "/home/petronio/Nextcloud/theseLPP/runs/runs_benchmark/MTSI/dispersion_MTSI/dispersion_solver/dispersion_data/change_n/2e+17/")
-    ky,ome,gam = find_max_gamma(kz)
+    kappa,omega,gamma = open_disp_file(kz,path=path)
+    ky,ome,gam = find_max_gamma(kz,path=path)
 
-    gioco_omega = np.arange(0.5*ome,1.5*ome,0.005)
-    gioco_gamma = np.arange(0.5*gam,1.5*gam,0.005)
+    gioco_omega = np.arange(0.8*ome,1.2*ome,0.005)
+    gioco_gamma = np.arange(0.8*gam,1.2*gam,0.005)
 
     solution_real = np.zeros((len(gioco_omega),len(gioco_gamma)))
     solution_imag = np.zeros((len(gioco_omega),len(gioco_gamma)))
