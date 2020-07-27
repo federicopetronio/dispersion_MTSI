@@ -51,14 +51,14 @@ def precedent_openfile(kz,Nkys=836,path=None):
     omega[:len(omega_read)] = omega_read
     gamma[:len(gamma_read)] = gamma_read
 
-    return kappa, omega, gamma
+    return kappa, omega, gamma,kz
 
 
 def find_max_gamma(kz,path=None):
     if path == None:
         path = '/home/petronio/Nextcloud/theseLPP/runs/runs_benchmark/MTSI/dispersion_MTSI/dispersion_solver/dispersion_data/general_results/'
 
-    kappa,omega,gamma = precedent_openfile(kz,path=path)
+    kappa,omega,gamma,kz = precedent_openfile(kz,path=path)
     max_ind = np.argmax(gamma)
 
     start = 0.001
@@ -90,32 +90,40 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
                         ionTemperature=0.5*u.eV)
 
     kx = 0.0
-    kappa,omega,gamma = precedent_openfile(kz,path=path)
+    kappa,omega,gamma,kz = precedent_openfile(kz,path=path)
+    print("kz_opened : {:.4f}".format(kz) )
+
     if unnorm:
         kappa = kappa/prt.Debye_length
         omega = omega*prt.ionPlasmaFrequency
         gamma = gamma*prt.ionPlasmaFrequency
 
     ky,ome,gam = find_max_gamma(kz,path=path)
+    print("max_ome: ", ome)
+    print("max_gam: ", gam)
 
     # plt.figure()
     # plt.plot(kappa,gamma)
     # plt.plot(ky/prt.Debye_length,gam*prt.ionPlasmaFrequency,'o')
 
     print(ky/prt.Debye_length)
-    gioco_omega = np.arange(0.8*ome,1.2*ome,0.005)
-    gioco_gamma = np.arange(0.8*gam,1.2*gam,0.005)
-    kyons = [ky-0.0001,ky,ky+0.0001]
+    gioco_omega = np.arange(0.9*ome,1.1*ome,0.001)
+    gioco_gamma = np.arange(0.9*gam,1.1*gam,0.001)
+    kyons = [ky-0.0001,ky+0.0001]
 
     if unnorm:
         ky = ky/prt.Debye_length
         kz = kz/prt.Debye_length
-        gioco_omega = np.arange(0.5*ome,2*ome,0.008)*prt.ionPlasmaFrequency
-        gioco_gamma = np.arange(0.5*gam,2*gam,0.008)*prt.ionPlasmaFrequency
+        gioco_omega = np.arange(0.8*ome,1.2*ome,0.002)*prt.ionPlasmaFrequency
+        gioco_gamma = np.arange(0.9*gam,1.1*gam,0.002)*prt.ionPlasmaFrequency
         ome = ome*prt.ionPlasmaFrequency
         gam = gam*prt.ionPlasmaFrequency
         kyons = kyons/prt.Debye_length
         print(ky)
+        # print("gioco_omega",gioco_omega,"\n gioco_gamma",gioco_gamma)
+        # print("ome", ome, gioco_omega[int(len(gioco_omega)/2)])
+        # print("gam", gam, gioco_gamma[int(len(gioco_gamma)/2)])
+
 
     solution_real = np.zeros((len(gioco_omega),len(gioco_gamma)))
     solution_imag = np.zeros((len(gioco_omega),len(gioco_gamma)))
@@ -124,7 +132,7 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
     else:
         plasmaEps = partial(eps_MTSI, prt=prt) #assign to the function eps_MTSI the value of prt from now on
 
-    max_pos = np.zeros((3,2))
+    max_pos = np.zeros((len(kyons),2))
     for kk,kaps in enumerate(kyons):
         for i,omega_1 in enumerate(gioco_omega) :
             for j,gamma_1 in enumerate(gioco_gamma) :
@@ -136,11 +144,17 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
 
         abs_sol=abs(solution_real+1j*solution_imag)
         max_pos[kk,:] = np.unravel_index(abs(abs_sol).argmax(), abs_sol.shape)
+        break
+    print("dist_ome ", ome/prt.ionPlasmaFrequency,gioco_omega[int(max_pos[0,0])]/prt.ionPlasmaFrequency)
+    print("dist_ome ", ome/prt.ionPlasmaFrequency-gioco_omega[int(max_pos[0,0])]/prt.ionPlasmaFrequency)
+    print("dist_gam ", gam/prt.ionPlasmaFrequency,gioco_gamma[int(max_pos[0,1])]/prt.ionPlasmaFrequency)
+    print("dist_gam ", gam/prt.ionPlasmaFrequency-gioco_gamma[int(max_pos[0,1])]/prt.ionPlasmaFrequency)
 
 
     plt.figure()
     plt.title("invers of susceptibility, "+"density {:}".format(plasmaDensity))
     plt.pcolor(gioco_gamma*u.s/u.rad,gioco_omega*u.s/u.rad, abs(solution_real+1j*solution_imag))
+    plt.plot(gam,ome,'*')
     # plt.pcolor(gioco_gamma,gioco_omega, abs(solution_real+1j*solution_imag))
     plt.xlabel("$\gamma/\omega_{pi}$")
     plt.ylabel("$\omega/\omega_{pi}$")
@@ -153,8 +167,9 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
     plt.title("density {:}".format(plasmaDensity))
     plt.plot(kappa,abs(gamma), label="solver solution")
     plt.plot(kyons[0],gioco_gamma[int(max_pos[0,1])],'o',color='blue',label = "computed solution")
-    plt.plot(kyons[1],gioco_gamma[int(max_pos[1,1])],'o',color='blue')
-    plt.plot(kyons[2],gioco_gamma[int(max_pos[2,1])],'o',color='blue')
+    # plt.plot(kyons[1],gioco_gamma[int(max_pos[1,1])],'o',color='blue')
+    plt.plot(ky, gam, '*',color='magenta')
+    # plt.plot(kyons[2],gioco_gamma[int(max_pos[2,1])],'o',color='blue')
     plt.xlabel("Azimuthal wave number $k_{\\theta} \\lambda_{De}$")
     plt.ylabel("Growth rate  $\\gamma/\\omega_{pi}$ ")
 
@@ -164,18 +179,19 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
     plt.legend()
 
 
-    # plt.figure(figsize=(6,5))
-    # plt.plot(kappa,omega, label="solver solution")
-    # plt.title("density {:}".format(plasmaDensity))
-    # plt.plot(kyons[0],gioco_omega[int(max_pos[0,0])],'*',color='blue',label = "computed solution")
+    plt.figure(figsize=(6,5))
+    plt.plot(kappa,omega, label="solver solution")
+    plt.title("density {:}".format(plasmaDensity))
+    plt.plot(kyons[0],gioco_omega[int(max_pos[0,0])],'o',color='blue',label = "computed solution")
+    plt.plot(ky, ome, '*',color='magenta')
     # plt.plot(kyons[1],gioco_omega[int(max_pos[1,0])],'*',color='blue')
     # plt.plot(kyons[2],gioco_omega[int(max_pos[2,0])],'*',color='blue')
-    # plt.xlabel("Azimuthal wave number $k_{\\theta} \\lambda_{De}$")
-    # plt.ylabel("Pulsations  $\\omega/\\omega_{pi}$ ")
-    # if unnorm:
-    #     plt.xlabel("Azimuthal wave number $k_{\\theta}$")
-    #     plt.ylabel("Pulsations  $\\omega$ ")
-    # plt.legend()
+    plt.xlabel("Azimuthal wave number $k_{\\theta} \\lambda_{De}$")
+    plt.ylabel("Pulsations  $\\omega/\\omega_{pi}$ ")
+    if unnorm:
+        plt.xlabel("Azimuthal wave number $k_{\\theta}$")
+        plt.ylabel("Pulsations  $\\omega$ ")
+    plt.legend()
 
     print(density,ky,kz)
     return max_pos

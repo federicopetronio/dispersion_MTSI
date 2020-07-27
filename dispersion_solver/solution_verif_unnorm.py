@@ -8,7 +8,7 @@ from astropy.constants import m_e, m_p
 from astropy import units as u
 
 
-kz = 0.0450
+kz = 0.0370
 density = 5e16
 # max_pos = verification_dispersion(kz, density=density,unnorm=True)
 
@@ -20,6 +20,8 @@ prt_base=PlasmaParameters(plasmaDensity=density*u.m**(-3),
                     ionTemperature=0.5*u.eV)
 
 densities = [5e16,1e17,2e17,3e17]
+# densities = [1e17,2e17]
+
 for dindondensity in densities:
     prtd=PlasmaParameters(plasmaDensity=dindondensity*u.m**(-3),
                         electronTemperature=10*u.eV,

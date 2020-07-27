@@ -11,6 +11,7 @@ reload(directsolver)
 import util
 reload(util)
 from util.MTSI  import eps_MTSI
+from util.tools_dispersion import find_max_gamma
 from util.iaw import eps_IAW, analytic_IAW, analytic_IAW_simple,first_guess,first_guess_1,precedent_guess
 from directsolver import solvekys
 from scipy import optimize
@@ -24,17 +25,10 @@ mi = 131*m_p.value
 #~~~~~~~~~~~~~~~~~~~~~~
 
 from util.parameters import PlasmaParameters
-Te = 10*u.eV
-plasmaDensity=2e17 *u.m**(-3)
-pasmaD = plasmaDensity*u.m**(3)
-pp = PlasmaParameters(plasmaDensity=plasmaDensity, electronTemperature=Te)
 
 #~~~~~~~~~~~~~~~~~~~~~~
 from datetime import date, datetime
 
-today = date.today()
-now = datetime.now()
-current = today.strftime("%y%m%d_")+now.strftime("%H:%M:%S")+"map2D"
 sentierino = os.getcwd()
 while True:
     try:
@@ -51,47 +45,60 @@ path = sentierino + "/dispersion_data/2Dmap/"
 print(path)
 
 kx = 0.0
-ky = 0.0268
-kz = 0.001
+ky = 0.016
+kz = 0.0370
 
-prt=PlasmaParameters(plasmaDensity=plasmaDensity,
-                     electronTemperature=10*u.eV,
-                     magneticField=0.02*u.T,
-                     electricField=1e4*u.V/u.m,
-                     ionTemperature=0.5*u.eV)
+Te = 10*u.eV
+plasmaDensities = [5e16,5.05e16,5.1e16,5.15e16]*u.m**(-3)
+print(plasmaDensities)
 
-
-gioco_omega = np.arange(0.001,0.5,0.003)
-gioco_gamma = np.arange(-0.005,0.1,0.0005)
+passo = 200
 # gioco_gamma = np.arange(0.02,3,0.01)
 # gioco_omega = np.arange(0.01,3,0.01)
 
 
-solution_real = np.zeros((len(gioco_omega),len(gioco_gamma)))
-solution_imag = np.zeros((len(gioco_omega),len(gioco_gamma)))
-plasmaEps = partial(eps_MTSI, prt=prt) #assign to the function eps_MTSI the value of prt from now on
+solution_real = np.zeros((passo,passo))
+solution_imag = np.zeros((passo,passo))
+a =  np.zeros((len(plasmaDensities),passo,passo))
 
-for i,omega in enumerate(gioco_omega) :
-    for j,gamma in enumerate(gioco_gamma) :
-        # solution[i,j] = plasmaEps(omg=omega+1j*gamma,kx=0.0,kz=kz,ky=ky)
-        zia = 1/plasmaEps(omg=omega+1j*gamma,kx=0.0,kz=kz,ky=ky)
-        # print(zia)
-        solution_real[i,j] = zia.real
-        solution_imag[i,j] = zia.imag
+for ind,den in enumerate(plasmaDensities):
+    ky,ome,gam = find_max_gamma(kz,path= sentierino + "/dispersion_data/change_n/{:}/".format(plasmaDensities[0]*u.m**(3)))
+    print(ky,ome,gam)
+    gioco_omega = np.linspace(0.9*ome,1.3*ome,passo)
+    gioco_gamma = np.linspace(0.95*gam,1.05*gam,passo)
+    prt=PlasmaParameters(plasmaDensity=den,
+    electronTemperature=10*u.eV,
+    magneticField=0.02*u.T,
+    electricField=1e4*u.V/u.m,
+    ionTemperature=0.5*u.eV)
+    plasmaEps = partial(eps_MTSI, prt=prt) #assign to the function eps_MTSI the value of prt from now on
+    for i,omega in enumerate(gioco_omega) :
+        for j,gamma in enumerate(gioco_gamma) :
+            # solution[i,j] = plasmaEps(omg=omega+1j*gamma,kx=0.0,kz=kz,ky=ky)
+            zia = 1/plasmaEps(omg=omega+1j*gamma,kx=0.0,kz=kz,ky=ky)
+            solution_real[i,j] = zia.real
+            solution_imag[i,j] = zia.imag
 
-a=abs(solution_real+1j*solution_imag)
-max_pos = np.unravel_index(abs(a).argmax(), a.shape)
-print(max_pos)
+    a[ind,:,:]=abs(solution_real+1j*solution_imag)
+    max_pos = np.unravel_index(abs(a[ind,:,:]).argmax(), ((passo,passo)))
+    print("max_pos",max_pos)
+    print("omega max = ", gioco_omega[max_pos[0]])
+    print("gamma max = ", gioco_gamma[max_pos[1]])
+
+
+    plt.figure()
+    plt.title("invers of susceptibility n={:}".format(den))
+    plt.pcolor(gioco_gamma,gioco_omega, abs(solution_real+1j*solution_imag))
+    plt.xlabel("$\gamma/\omega_{pi}$")
+    plt.ylabel("$\omega/\omega_{pi}$")
+    # plt.text(x=gioco_gamma[-70],y=gioco_omega[-25],s="kz = %5.4f \n"%kz + "ky = %5.4f \n"%ky+
+    #         "$\omega_{max}$ = %6.4f \n"%gioco_omega[max_pos[0]] + "$\gamma_{max}$ = %6.4f"%gioco_gamma[max_pos[1]],color='red')
+    # plt.text(x=gioco_gamma[-70],y=gioco_omega[-15],s="$\omega_{max}$ = %6.4f \n"%gioco_omega[max_pos[0]] + "$\gamma_{max}$ = %6.4f"%gioco_gamma[max_pos[1]],color='red')
+    plt.savefig(path +"n={:}".format(den*u.m**(3))+ "kz=%5.4f"%kz + "_ky+%5.4f"%ky+".png")
+    plt.colorbar()
+
 
 plt.figure()
-plt.title("invers of susceptibility ")
-plt.pcolor(gioco_gamma,gioco_omega, abs(solution_real+1j*solution_imag))
-plt.xlabel("$\gamma/\omega_{pi}$")
-plt.ylabel("$\omega/\omega_{pi}$")
-plt.text(x=gioco_gamma[-70],y=gioco_omega[-25],s="kz = %5.4f \n"%kz + "ky = %5.4f \n"%ky+
-        "$\omega_{max}$ = %6.4f \n"%gioco_omega[max_pos[0]] + "$\gamma_{max}$ = %6.4f"%gioco_gamma[max_pos[1]],color='red')
-# plt.text(x=gioco_gamma[-70],y=gioco_omega[-15],s="$\omega_{max}$ = %6.4f \n"%gioco_omega[max_pos[0]] + "$\gamma_{max}$ = %6.4f"%gioco_gamma[max_pos[1]],color='red')
-plt.savefig(path +"n={:}".format(plasmaDensity*u.m**(3))+ "kz=%5.4f"%kz + "_ky+%5.4f"%ky+".png")
+plt.pcolor(a[0,:,:]+a[1,:,:]+a[2,:,:]+a[3,:,:])
 plt.colorbar()
-
 plt.show()
