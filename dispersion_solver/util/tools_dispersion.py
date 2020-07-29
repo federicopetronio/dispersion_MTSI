@@ -65,7 +65,7 @@ def find_max_gamma(kz,path=None):
 
     start = 0.001
     stop = 0.22
-    pas = 0.00023803827751196175
+    pas = 0.0002383025027203481
 
     kapa = np.arange(start,stop,pas)
     print(kz,kapa[max_ind],omega[max_ind],gamma[max_ind])
@@ -103,8 +103,8 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
         gamma = gamma*prt.ionPlasmaFrequency
 
     ky,ome,gam = find_max_gamma(kz,path=path)
-    # print("max_ome: ", ome)
-    # print("max_gam: ", gam)
+    print("max_ome: ", ome)
+    print("max_gam: ", gam)
 
     # plt.figure()
     # plt.plot(kappa,gamma)
