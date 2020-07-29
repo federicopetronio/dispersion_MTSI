@@ -53,14 +53,14 @@ def precedent_openfile(kz,Nkys=920,path=None):
     omega[:len(omega_read)] = omega_read
     gamma[:len(gamma_read)] = gamma_read
 
-    return omega, gamma
+    return omega, gamma, kz
 
 
 def find_max_gamma(kz,path=None):
     if path == None:
         path = '/home/petronio/Nextcloud/theseLPP/runs/runs_benchmark/MTSI/dispersion_MTSI/dispersion_solver/dispersion_data/general_results/'
 
-    omega,gamma = precedent_openfile(kz,path=path)
+    omega,gamma,kz = precedent_openfile(kz,path=path)
     max_ind = np.argmax(gamma)
 
     start = 0.001
@@ -94,7 +94,7 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
     kx = 0.0
 
     kappa = np.arange(0.001,0.2200,0.0002383025027203481)
-    omega,gamma = precedent_openfile(kz,path=path)
+    omega,gamma,kz = precedent_openfile(kz,path=path)
     # print("kz_opened : {:.4f}".format(kz) )
 
     if unnorm:

@@ -8,7 +8,7 @@ from astropy.constants import m_e, m_p
 from astropy import units as u
 
 
-kz = 0.0370
+kz = 0.0370/u.m
 density = 5e16
 # max_pos = verification_dispersion(kz, density=density,unnorm=True)
 
@@ -24,11 +24,11 @@ prt_base=PlasmaParameters(plasmaDensity=density*u.m**(-3),
                     magneticField=0.02*u.T,
                     electricField=1e4*u.V/u.m,
                     ionTemperature=0.5*u.eV)
-Lr=0.014*u.m
+Lr=0.0128*u.m
 kz = 2*np.pi/Lr
 
-# densities = [5e16,1e17,2e17,3e17]
-densities = [5e16,2e17]
+densities = [5e16,1e17,2e17,3e17]
+# densities = [5e16,2e17]
 kappa = np.ones((len(densities),Nkys))
 gamma = np.ones((len(densities),Nkys))
 omega = np.ones((len(densities),Nkys))
@@ -41,6 +41,7 @@ for index,dindondensity in enumerate(densities):
                         electricField=1e4*u.V/u.m,
                         ionTemperature=0.5*u.eV)
     kz_z = kz*prtd.Debye_length
+    # kz_z = 0.037
     print("kz_z",kz_z)
     # kz_z = kz/prt_base.Debye_length*prtd.Debye_length
     # print(kz_z)
@@ -62,4 +63,4 @@ plt.ylabel("Growth rate  $\\omega$ ")
 
 plt.grid(True)
 plt.show()
-plt.cl
+plt.close()
