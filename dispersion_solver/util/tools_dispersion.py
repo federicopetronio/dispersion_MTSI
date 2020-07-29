@@ -22,16 +22,17 @@ def open_disp_file(kz, path = None):
     gamma = np.genfromtxt(path + "kz={:5.4f}".format(kz) + "_gamma.txt", delimiter="  ", unpack=False)
     return kappa,omega,gamma
 
-def precedent_openfile(kz,Nkys=836,path=None):
+def precedent_openfile(kz,Nkys=920,path=None):
     if path == None:
         path = '/home/petronio/Nextcloud/theseLPP/runs/runs_benchmark/MTSI/dispersion_MTSI/dispersion_solver/dispersion_data/general_results/'
 
-    kymin = 0.001
-    kymax = 0.20
-    pas = 0.00023803827751196175
-    Nkys = (kymax-kymin)/pas
-    Nkys = int(Nkys)
-    kappa = np.arange(kymin,kymax,pas)
+    # kappa = np.genfromtxt(path + "ky.txt", delimiter="  ")
+    # if kz < 0.0099:
+    #     start = 0.001
+    #     stop = 0.1
+    #     steps = 500
+    #     kappa = np.arange(start,stop,(stop-start)/steps)
+    # else:
     print("kz : {:.4f}".format(kz) )
     while True:
         try :
@@ -45,13 +46,14 @@ def precedent_openfile(kz,Nkys=836,path=None):
 
     gamma_read = np.genfromtxt(path + "kz={:5.4f}".format(kz) + "_gamma.txt", delimiter="  ", unpack=False)
 
+    # print("Len",len(omega_read))
     omega = np.ones(Nkys)*1e-12
     gamma = np.ones(Nkys)*1e-12
 
     omega[:len(omega_read)] = omega_read
     gamma[:len(gamma_read)] = gamma_read
 
-    return kappa, omega, gamma,kz
+    return omega, gamma
 
 
 def find_max_gamma(kz,path=None):
@@ -91,7 +93,7 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
 
     kx = 0.0
     kappa,omega,gamma,kz = precedent_openfile(kz,path=path)
-    print("kz_opened : {:.4f}".format(kz) )
+    # print("kz_opened : {:.4f}".format(kz) )
 
     if unnorm:
         kappa = kappa/prt.Debye_length
@@ -99,15 +101,14 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
         gamma = gamma*prt.ionPlasmaFrequency
 
     ky,ome,gam = find_max_gamma(kz,path=path)
-    print("max_ome: ", ome)
-    print("max_gam: ", gam)
+    # print("max_ome: ", ome)
+    # print("max_gam: ", gam)
 
     # plt.figure()
     # plt.plot(kappa,gamma)
     # plt.plot(ky/prt.Debye_length,gam*prt.ionPlasmaFrequency,'o')
-
-    print(ky/prt.Debye_length)
-    gioco_omega = np.arange(0.9*ome,1.1*ome,0.001)
+    print("ky = ",ky,ky/prt.Debye_length)
+    gioco_omega = np.arange(0.9*ome,1.1*ome,0.0005)
     gioco_gamma = np.arange(0.9*gam,1.1*gam,0.001)
     kyons = [ky-0.0001,ky+0.0001]
 
@@ -119,7 +120,7 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
         ome = ome*prt.ionPlasmaFrequency
         gam = gam*prt.ionPlasmaFrequency
         kyons = kyons/prt.Debye_length
-        print(ky)
+        # print(ky)
         # print("gioco_omega",gioco_omega,"\n gioco_gamma",gioco_gamma)
         # print("ome", ome, gioco_omega[int(len(gioco_omega)/2)])
         # print("gam", gam, gioco_gamma[int(len(gioco_gamma)/2)])
@@ -145,10 +146,10 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
         abs_sol=abs(solution_real+1j*solution_imag)
         max_pos[kk,:] = np.unravel_index(abs(abs_sol).argmax(), abs_sol.shape)
         break
-    print("dist_ome ", ome/prt.ionPlasmaFrequency,gioco_omega[int(max_pos[0,0])]/prt.ionPlasmaFrequency)
-    print("dist_ome ", ome/prt.ionPlasmaFrequency-gioco_omega[int(max_pos[0,0])]/prt.ionPlasmaFrequency)
-    print("dist_gam ", gam/prt.ionPlasmaFrequency,gioco_gamma[int(max_pos[0,1])]/prt.ionPlasmaFrequency)
-    print("dist_gam ", gam/prt.ionPlasmaFrequency-gioco_gamma[int(max_pos[0,1])]/prt.ionPlasmaFrequency)
+    # print("dist_ome ", ome/prt.ionPlasmaFrequency,gioco_omega[int(max_pos[0,0])]/prt.ionPlasmaFrequency)
+    # print("dist_ome ", ome/prt.ionPlasmaFrequency-gioco_omega[int(max_pos[0,0])]/prt.ionPlasmaFrequency)
+    # print("dist_gam ", gam/prt.ionPlasmaFrequency,gioco_gamma[int(max_pos[0,1])]/prt.ionPlasmaFrequency)
+    # print("dist_gam ", gam/prt.ionPlasmaFrequency-gioco_gamma[int(max_pos[0,1])]/prt.ionPlasmaFrequency)
 
 
     plt.figure()
@@ -192,6 +193,6 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
         plt.xlabel("Azimuthal wave number $k_{\\theta}$")
         plt.ylabel("Pulsations  $\\omega$ ")
     plt.legend()
+    plt.close('all')
 
-    print(density,ky,kz)
-    return max_pos
+    return kappa,gamma

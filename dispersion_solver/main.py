@@ -12,10 +12,10 @@ import util
 reload(util)
 from util.MTSI  import eps_MTSI
 from util.iaw import eps_IAW, analytic_IAW, analytic_IAW_simple,first_guess,first_guess_1,first_guess_mod
-from util.iaw import precedent_openfile, precedent_guess,precedent_guess_mod
+from util.iaw import precedent_guess,precedent_guess_mod
 from directsolver import solvekys
 from scipy import optimize
-
+from util.tools_dispersion import precedent_openfile
 import matplotlib.pyplot as plt
 import numpy as np
 from astropy.constants import m_e, m_p

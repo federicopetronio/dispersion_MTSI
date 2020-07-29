@@ -82,41 +82,44 @@ def precedent_guess_mod(k, ky,ome,gam):
     kappa = ky
     omega = ome
     gamma = gam
+    # print("lunghezze",len(kappa),len(gamma),len(omega))
     solution_prec = 1e-12+1j*1e-12
     for index,ka in enumerate(kappa) :
         if ka >= k :
+            # print(index)
             solution_prec = complex(omega[index],gamma[index])
             break
     return solution_prec
 
-def precedent_openfile(kz,Nkys,path=None):
-    if path == None:
-        path = '/home/petronio/Nextcloud/theseLPP/runs/runs_benchmark/MTSI/dispersion_MTSI/dispersion_solver/dispersion_data/general_results/'
-
-    # kappa = np.genfromtxt(path + "ky.txt", delimiter="  ")
-    # if kz < 0.0099:
-    #     start = 0.001
-    #     stop = 0.1
-    #     steps = 500
-    #     kappa = np.arange(start,stop,(stop-start)/steps)
-    # else:
-    print("kz : {:.4f}".format(kz) )
-    while True:
-        try :
-            omega_read = np.genfromtxt(path + "kz={:5.4f}".format(kz) + "_omega_r.txt", delimiter="  ", unpack=False)
-            print("kz_open : {:.4f}".format(kz) )
-            break
-        except :
-            # print(path + "kz={:5.4f}".format(kz) + "_omega_r.txt")
-            kz = kz + 0.0001
-            # break
-
-    gamma_read = np.genfromtxt(path + "kz={:5.4f}".format(kz) + "_gamma.txt", delimiter="  ", unpack=False)
-
-    omega = np.ones(Nkys)*1e-12
-    gamma = np.ones(Nkys)*1e-12
-
-    omega[:len(omega_read)] = omega_read
-    gamma[:len(gamma_read)] = gamma_read
-
-    return omega, gamma
+# def precedent_openfile(kz,Nkys,path=None):
+#     if path == None:
+#         path = '/home/petronio/Nextcloud/theseLPP/runs/runs_benchmark/MTSI/dispersion_MTSI/dispersion_solver/dispersion_data/general_results/'
+#
+#     # kappa = np.genfromtxt(path + "ky.txt", delimiter="  ")
+#     # if kz < 0.0099:
+#     #     start = 0.001
+#     #     stop = 0.1
+#     #     steps = 500
+#     #     kappa = np.arange(start,stop,(stop-start)/steps)
+#     # else:
+#     print("kz : {:.4f}".format(kz) )
+#     while True:
+#         try :
+#             omega_read = np.genfromtxt(path + "kz={:5.4f}".format(kz) + "_omega_r.txt", delimiter="  ", unpack=False)
+#             print("kz_open : {:.4f}".format(kz) )
+#             break
+#         except :
+#             # print(path + "kz={:5.4f}".format(kz) + "_omega_r.txt")
+#             kz = kz + 0.0001
+#             # break
+#
+#     gamma_read = np.genfromtxt(path + "kz={:5.4f}".format(kz) + "_gamma.txt", delimiter="  ", unpack=False)
+#
+#     # print("Len",len(omega_read))
+#     omega = np.ones(Nkys)*1e-12
+#     gamma = np.ones(Nkys)*1e-12
+#
+#     omega[:len(omega_read)] = omega_read
+#     gamma[:len(gamma_read)] = gamma_read
+#
+#     return omega, gamma

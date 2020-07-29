@@ -14,7 +14,8 @@ import util
 reload(util)
 from util.MTSI  import eps_MTSI
 from util.iaw import eps_IAW, analytic_IAW, analytic_IAW_simple,first_guess,first_guess_1,first_guess_mod
-from util.iaw import precedent_openfile, precedent_guess,precedent_guess_mod
+from util.iaw import precedent_guess,precedent_guess_mod
+from util.tools_dispersion import precedent_openfile
 from directsolver import solvekys
 from scipy import optimize
 

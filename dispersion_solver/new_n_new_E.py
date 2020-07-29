@@ -12,7 +12,8 @@ import util
 reload(util)
 from util.MTSI  import eps_MTSI
 from util.iaw import eps_IAW, analytic_IAW, analytic_IAW_simple,first_guess,first_guess_1,first_guess_mod
-from util.iaw import precedent_openfile, precedent_guess,precedent_guess_mod
+from util.iaw import precedent_guess,precedent_guess_mod
+from util.tools_dispersion import precedent_openfile
 from directsolver import solvekys
 from scipy import optimize
 
@@ -50,12 +51,13 @@ try:
 except:
     print("already existing folder dispersion_data/change_n_E/{:}_{:}/".format(electricField*u.m**(1)/u.V,plasmaDensity*u.m**(3)))
 
-
+# https://numpy.org/doc/stable/reference/generated/numpy.genfromtxt.html
 # path = sentierino + "/dispersion_data/all_data/"
 path2 = sentierino + "/dispersion_data/change_n_E/{:}_{:}/".format(electricField*u.m**(1)/u.V,plasmaDensity*u.m**(3))
 
 # path = "/home/petronio/Nextcloud/theseLPP/runs/runs_benchmark/MTSI/dispersion_MTSI/dispersion_solver/dispersion_data/"
 print(path2)
+path3 = sentierino + "/dispersion_data/change_n/{:}/".format(plasmaDensity*u.m**(3))
 
 kx = 0.0
 prt=PlasmaParameters(plasmaDensity=plasmaDensity,
@@ -67,7 +69,7 @@ prt=PlasmaParameters(plasmaDensity=plasmaDensity,
 Lr = 0.0128*u.m
 kz = 2*np.pi*prt.Debye_length/Lr
 
-kzetas = np.arange(0.001,0.050,0.002)
+kzetas = np.arange(0.001,0.055,0.002)
 
 
 try:
@@ -88,12 +90,13 @@ f.close()
 # kz = 0.001
 print("kz * lambda_d = ",kz)
 kymin = 0.001
-kymax = 0.20
+kymax = 0.22
 pas = 0.00023803827751196175
 
 
 Nkys = (kymax-kymin)/pas
 Nkys = int(Nkys)
+
 
 plasmaEps = partial(eps_MTSI, prt=prt) #assign to the function eps_MTSI the value of prt from now on
 primo = True
@@ -107,12 +110,17 @@ dispersion_clean = np.zeros((len(kzetas),4,Nkys))
 
 for i,kz in enumerate(kzetas):
     print("kz * lambda_d = ",kz)
+    omega_1, gamma_1 = precedent_openfile(kz=kz,Nkys=Nkys,path=path2)
+    for indice in np.arange(len(omega_1)):
+        if omega_1[indice]>0.5 :
+            omega_1[indice] = omega_1[indice-2]
 
-    omega_1, gamma_1 = precedent_openfile(kz=kz,Nkys=Nkys,path="/home/petronio/Nextcloud/theseLPP/runs/runs_benchmark/MTSI/dispersion_MTSI/dispersion_solver/dispersion_data/change_n/2e+17/")
+    gamma_1=abs(gamma_1)
     ky_1 = np.arange(kymin,kymax,pas)
+    ky_1=ky_1[:len(omega_1)]
     # primo = False
 
-    wrfunct = lambda k: precedent_guess_mod(k=k,ky=ky_1,ome=omega_1,gam=gamma_1)
+    wrfunct = lambda k: precedent_guess_mod(k=k,ky=ky_1[:len(omega_1)],ome=omega_1,gam=gamma_1)
 
     kysref1,  xsref1 = solvekys(plasmaEps, kx=kx, kz=kz, kymin=kymin, kymax=kymax,
                              parall=False, wrfunct=wrfunct,Nkys=Nkys,already_solved=True,root=False)
