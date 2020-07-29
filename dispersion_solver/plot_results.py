@@ -47,7 +47,6 @@ print("Nkys1",Nkys,(kymax-kymin)/pas)
 kyss = np.arange(kymin,kymax,pas)
 kys = kyss[:]
 Nkys = len(kys)
-print(kyss)
 
 Lr=0.0128*u.m
 kz0 = 2*np.pi/Lr
@@ -94,8 +93,8 @@ for ind,den in enumerate(density):
 
 
     kys_denorm = kys/prt.Debye_length
-    plt.plot(kys_denorm, abs(gamma_1),"--",label = "n = {:}".format(den)+" m-3")
-    # plt.plot(kys_denorm, abs(omega_1),"--",label = "n = {:}".format(den)+" m-3")
+    # plt.plot(kys_denorm, abs(gamma_1),"--",label = "n = {:}".format(den)+" m-3")
+    plt.plot(kys_denorm, abs(omega_1),"--",label = "n = {:}".format(den)+" m-3")
 
     plt.xlabel("Azimuthal wave number $k_{\\theta}$ [1/m]")
     plt.ylabel("Pulsations  $\\gamma$ [rad/s]")

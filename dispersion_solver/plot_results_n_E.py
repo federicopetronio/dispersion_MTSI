@@ -39,25 +39,30 @@ from datetime import date, datetime
 sentierino = os.getcwd()
 
 kymin = 0.001
-kymax = 0.20
+kymax = 0.22001
 
-pas = 0.00023803827751196175
-
-Nkys = (kymax-kymin)/pas
-Nkys = int(Nkys)
-
+pas = 0.0002383025027203481
 kys = np.arange(kymin,kymax,pas)
+Nkys = len(kys)
 
-kz0 = 0.0258
+# print(len(kys))
+# print(Nkys)
+
+Lr=0.02*u.m
+kz0 = 1*np.pi/Lr
+Ltheta=0.015*u.m
+ktheta0 = 3*2*np.pi/Ltheta
+
+print("kz0 = ",kz0)
 fig = plt.figure(figsize=(6,5))
-plt.title("kz0={:5.4f}".format(kz0))
+plt.title("kz ={:5.0f}, $L_r$ = {:}".format(kz0,Lr) )
 plt.grid()
 
 path1 = sentierino + "/dispersion_data/change_E_Field/{:}/".format(10000.0)
 path2 = sentierino + "/dispersion_data/change_n_E/20000.0_2e+17/"
 libello = ["standard", "AT"]
 
-prt_base=PlasmaParameters(plasmaDensity=5e16*u.m**(-3),
+prt_base=PlasmaParameters(plasmaDensity=7e16*u.m**(-3),
                      electronTemperature=10*u.eV,
                      magneticField=0.02*u.T,
                      electricField=1e4*u.V/u.m,
@@ -75,27 +80,24 @@ for ind,path in enumerate([path1,path2]):
     # path = sentierino + "/dispersion_data/change_E_Field/change_n_E/20000.0_2e+17/".format(den)
 
     prt = particella[ind]
-    kz = (kz0/prt_base.Debye_length)*prt.Debye_length
+    kz = kz0*prt.Debye_length
+    print("kz_tilde  = ", kz0*prt.Debye_length)
 
     omega1, gamma1 = precedent_openfile(kz,Nkys,path)
-
 
     for index in range(len(gamma1)):
         if gamma1[index]>100:
             gamma1[index] = 1e-12
     gamma1 = gamma1*prt.ionPlasmaFrequency
     kys_denorm = kys/prt.Debye_length
-    # plt.plot(kysref1, dispersion[i,1,:], "green", label="$\omega_r$ solver")
-    # plt.plot(kysref1, dispersion[i,2,:], "magenta", label="$\gamma$ solver")
-    plt.plot(kys_denorm,abs(gamma1),label = libello[ind])
-    plt.xlabel("Azimuthal wave number $k_{\\theta} [1/m]$")
-    plt.ylabel("Pulsations  $\\gamma [rad/s] $")
-    plt.tight_layout()
 
-    #plt.xlim(left=0)
-    #plt.ylim(bottom=0)
+    plt.plot(kys_denorm,abs(gamma1),label = libello[ind])
+plt.xlabel("Azimuthal wave number, $k_{\\theta}$ 1/m")
+plt.ylabel("Growth rate, $\\gamma$ rad/s")
+plt.axvline(x = 2/3*ktheta0*u.m, linestyle='dashed', label="2 periods theta",color="green")
+plt.axvline(x = ktheta0*u.m, linestyle='dashed', label="3 periods theta",color='magenta')
 plt.legend()
 plt.tight_layout()
-plt.savefig(sentierino   + "/images_dispersion/dispersion_kz={:5.4f}_gamma_AT.png".format(kz))
-# plt.show()
+plt.savefig(sentierino   + "/images_dispersion/dispersion_kz={:5.4f}_Lr={:}_gamma_AT.png".format(kz,Lr/u.m))
+plt.show()
 plt.close()

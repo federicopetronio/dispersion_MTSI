@@ -33,7 +33,7 @@ def precedent_openfile(kz,Nkys=920,path=None):
     #     steps = 500
     #     kappa = np.arange(start,stop,(stop-start)/steps)
     # else:
-    print("kz : {:.4f}".format(kz) )
+    print("kz_preopen : {:.4f}".format(kz) )
     while True:
         try :
             omega_read = np.genfromtxt(path + "kz={:5.4f}".format(kz) + "_omega_r.txt", delimiter="  ", unpack=False)
@@ -60,7 +60,7 @@ def find_max_gamma(kz,path=None):
     if path == None:
         path = '/home/petronio/Nextcloud/theseLPP/runs/runs_benchmark/MTSI/dispersion_MTSI/dispersion_solver/dispersion_data/general_results/'
 
-    kappa,omega,gamma,kz = precedent_openfile(kz,path=path)
+    omega,gamma = precedent_openfile(kz,path=path)
     max_ind = np.argmax(gamma)
 
     start = 0.001
@@ -92,7 +92,9 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
                         ionTemperature=0.5*u.eV)
 
     kx = 0.0
-    kappa,omega,gamma,kz = precedent_openfile(kz,path=path)
+
+    kappa = np.arange(0.001,0.2200,0.0002383025027203481)
+    omega,gamma = precedent_openfile(kz,path=path)
     # print("kz_opened : {:.4f}".format(kz) )
 
     if unnorm:
@@ -108,8 +110,8 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
     # plt.plot(kappa,gamma)
     # plt.plot(ky/prt.Debye_length,gam*prt.ionPlasmaFrequency,'o')
     print("ky = ",ky,ky/prt.Debye_length)
-    gioco_omega = np.arange(0.9*ome,1.1*ome,0.0005)
-    gioco_gamma = np.arange(0.9*gam,1.1*gam,0.001)
+    gioco_omega = np.arange(0.8*ome,1.2*ome,0.0005)
+    gioco_gamma = np.arange(0.8*gam,1.2*gam,0.001)
     kyons = [ky-0.0001,ky+0.0001]
 
     if unnorm:
@@ -193,6 +195,6 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
         plt.xlabel("Azimuthal wave number $k_{\\theta}$")
         plt.ylabel("Pulsations  $\\omega$ ")
     plt.legend()
-    plt.close('all')
+    # plt.close('all')
 
-    return kappa,gamma
+    return kappa,gamma,omega
