@@ -6,6 +6,7 @@ from util.tools_dispersion import open_disp_file,find_max_gamma,verification_dis
 from util.parameters import PlasmaParameters
 from astropy.constants import m_e, m_p
 from astropy import units as u
+import os
 
 
 kz = 0.0370/u.m
@@ -27,13 +28,14 @@ prt_base=PlasmaParameters(plasmaDensity=density*u.m**(-3),
 Lr=0.0128*u.m
 kz = 2*np.pi/Lr
 
-densities = [5e16,1e17,2e17,3e17]
-# densities = [5e16,2e17]
+# densities = [5e16,1e17,2e17,3e17]
+densities = [5e16,2e17]
+
 kappa = np.ones((len(densities),Nkys))
 gamma = np.ones((len(densities),Nkys))
 omega = np.ones((len(densities),Nkys))
 
-
+kz_zz = [0.052,0.026]
 for index,dindondensity in enumerate(densities):
     prtd=PlasmaParameters(plasmaDensity=dindondensity*u.m**(-3),
                         electronTemperature=10*u.eV,
@@ -41,7 +43,9 @@ for index,dindondensity in enumerate(densities):
                         electricField=1e4*u.V/u.m,
                         ionTemperature=0.5*u.eV)
     kz_z = kz*prtd.Debye_length
-    # kz_z = 0.037
+    # use this to verify the invariance with respect to the density
+
+    # kz_z = kz_zz[index]
     print("kz_z",kz_z)
     # kz_z = kz/prt_base.Debye_length*prtd.Debye_length
     # print(kz_z)
@@ -62,5 +66,7 @@ plt.xlabel("Azimuthal wave number $k_{\\theta}$")
 plt.ylabel("Growth rate  $\\omega$ ")
 
 plt.grid(True)
+currentdir = os.getcwd()
+plt.savefig(currentdir + "/images_dispersion/" + "invariance_density.png")
 plt.show()
 plt.close()

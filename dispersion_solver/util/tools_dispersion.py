@@ -110,8 +110,8 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
     # plt.plot(kappa,gamma)
     # plt.plot(ky/prt.Debye_length,gam*prt.ionPlasmaFrequency,'o')
     print("ky = ",ky,ky/prt.Debye_length)
-    gioco_omega = np.arange(0.8*ome,1.2*ome,0.0005)
-    gioco_gamma = np.arange(0.8*gam,1.2*gam,0.001)
+    gioco_omega = np.arange(0.9*ome,1.1*ome,0.0005)
+    gioco_gamma = np.arange(0.9*gam,1.1*gam,0.001)
     kyons = [ky-0.0001,ky+0.0001]
 
     if unnorm:
@@ -156,9 +156,11 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
 
     plt.figure()
     plt.title("invers of susceptibility, "+"density {:}".format(plasmaDensity))
-    plt.pcolor(gioco_gamma*u.s/u.rad,gioco_omega*u.s/u.rad, abs(solution_real+1j*solution_imag))
+    if unnorm:
+        plt.pcolor(gioco_gamma*u.s/u.rad,gioco_omega*u.s/u.rad, abs(solution_real+1j*solution_imag))
+    else:
+        plt.pcolor(gioco_gamma,gioco_omega, abs(solution_real+1j*solution_imag))
     plt.plot(gam,ome,'*')
-    # plt.pcolor(gioco_gamma,gioco_omega, abs(solution_real+1j*solution_imag))
     plt.xlabel("$\gamma/\omega_{pi}$")
     plt.ylabel("$\omega/\omega_{pi}$")
     if unnorm:
@@ -170,9 +172,7 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
     plt.title("density {:}".format(plasmaDensity))
     plt.plot(kappa,abs(gamma), label="solver solution")
     plt.plot(kyons[0],gioco_gamma[int(max_pos[0,1])],'o',color='blue',label = "computed solution")
-    # plt.plot(kyons[1],gioco_gamma[int(max_pos[1,1])],'o',color='blue')
     plt.plot(ky, gam, '*',color='magenta')
-    # plt.plot(kyons[2],gioco_gamma[int(max_pos[2,1])],'o',color='blue')
     plt.xlabel("Azimuthal wave number $k_{\\theta} \\lambda_{De}$")
     plt.ylabel("Growth rate  $\\gamma/\\omega_{pi}$ ")
 
@@ -195,6 +195,7 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
         plt.xlabel("Azimuthal wave number $k_{\\theta}$")
         plt.ylabel("Pulsations  $\\omega$ ")
     plt.legend()
-    # plt.close('all')
 
+    # plt.close('all')
+    # plt.show()
     return kappa,gamma,omega
