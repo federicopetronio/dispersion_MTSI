@@ -59,7 +59,7 @@ plt.xlabel("Azimuthal wave number $k_{\\theta} \cdot \\lambda_D$")
 plt.ylabel("Growth rate $\\gamma / \\omega_{pi}$ and frequency $ \\omega / \\omega_{pi}$ ")
 
 [plt.axvline(x=xfct*prt_base.Debye_length, linestyle='dashed') for xfct in [492.79884762,  985.59769524, 1478.39654287, 1971.19539049]/u.m]
-# [plt.axvline(x=xfct, linestyle='dashed') for xfct in kys/u.m]
+[plt.axvline(x=xfct, linestyle='dashed') for xfct in kys/u.m]
 plt.grid(True)
 plt.savefig(current + "/images_dispersion/" + "{:}_case_ky={:.3f}_kz={:.3f}.png".format(caso,ky,kz))
 plt.show()

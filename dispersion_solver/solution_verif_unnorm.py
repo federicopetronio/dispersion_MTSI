@@ -25,11 +25,12 @@ prt_base=PlasmaParameters(plasmaDensity=density*u.m**(-3),
                     magneticField=0.02*u.T,
                     electricField=1e4*u.V/u.m,
                     ionTemperature=0.5*u.eV)
-Lr=0.0128*u.m
+Lr=0.015*u.m
 kz = 2*np.pi/Lr
 
-densities = [5e16,1e17,2e17,3e17]
+# densities = [5e16,1e17,2e17,3e17]
 # densities = [2e17,5e16]
+densities = [1e17,1e17,1e17]
 
 kappa = np.ones((len(densities),Nkys))
 gamma = np.ones((len(densities),Nkys))

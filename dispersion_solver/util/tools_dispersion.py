@@ -3,6 +3,7 @@ from util.MTSI  import eps_MTSI
 from util.MTSI_unnorm  import eps_MTSI_unnorm
 from functools import partial
 import matplotlib.pyplot as plt
+plt.rcParams["font.family"] = "STIXGeneral"
 import os
 
 
@@ -102,7 +103,7 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
     ky,ome,gam = find_max_gamma(kz,path=path)
 
     ind_ky = list(kappa).index(ky)
-    ind_ky = int(ind_ky*0.95)
+    # ind_ky = int(ind_ky*0.65)
     ky = kappa[ind_ky]
     ome = omega[ind_ky]
     gam = gamma[ind_ky]
@@ -170,49 +171,65 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
     # print("dist_gam ", gam/prt.ionPlasmaFrequency,gioco_gamma[int(max_pos[0,1])]/prt.ionPlasmaFrequency)
     # print("dist_gam ", gam/prt.ionPlasmaFrequency-gioco_gamma[int(max_pos[0,1])]/prt.ionPlasmaFrequency)
 
+    current = os.getcwd()
 
-    plt.figure()
-    plt.title("n: {:}, ".format(plasmaDensity) + "$k_{t}$: "+"{:.0f}, $k_r$: {:.0f}".format(ky,kz))
+    plt.figure(figsize=(8,8))
+
+    plt.subplot(2,2,(1,2))
+    plt.title("Inverse of permittivity and calculated dispersion")
     if unnorm:
-        plt.pcolor(gioco_gamma*u.s/u.rad,gioco_omega*u.s/u.rad, abs(solution_real+1j*solution_imag))
+        plt.pcolor(gioco_gamma*u.s/u.rad,gioco_omega*u.s/u.rad, abs(solution_real+1j*solution_imag),cmap='Reds')
     else:
-        plt.pcolor(gioco_gamma,gioco_omega, abs(solution_real+1j*solution_imag))
-    plt.plot(gam,ome,'*')
+        plt.pcolor(gioco_gamma,gioco_omega, abs(solution_real+1j*solution_imag),cmap='Reds')
+    plt.plot(gam,ome,'o',color='blue',label='solver solution')
     plt.xlabel("$\gamma/\omega_{pi}$")
     plt.ylabel("$\omega/\omega_{pi}$")
     if unnorm:
-        plt.xlabel("$\gamma$")
-        plt.ylabel("$\omega$")
-    plt.colorbar().set_label("$1 / \chi$")
+        plt.xlabel("$\gamma$ rad/s")
+        plt.ylabel("$\omega$ rad/s")
+        plt.text(gioco_gamma[5]*u.s/u.rad,gioco_omega[5]*u.s/u.rad,"n: {:}, ".format(plasmaDensity) + "$k_{\\theta}$: "+"{:.0f}, $k_r$: {:.0f}".format(ky,kz))
+        plt.text(gioco_gamma[5]*u.s/u.rad,gioco_omega[-5]*u.s/u.rad,"(a)")
+    plt.colorbar().set_label("$1 / \epsilon$")
+    plt.legend()
+    plt.tight_layout()
 
-    plt.figure(figsize=(6,5))
-    plt.title("n: {:}, $k_r$: {:.0f}".format(plasmaDensity,kz))
-    plt.plot(kappa,abs(gamma), label="solver solution")
-    plt.plot(kyons[0],gioco_gamma[int(max_pos[0,1])],'o',color='blue',label = "computed solution")
-    plt.plot(ky, gam, '*',color='magenta')
+    # plt.figure(figsize=(6,5))
+    plt.subplot(2,2,3)
+    # plt.title("n: {:}, $k_r$: {:.0f}".format(plasmaDensity,kz))
+    plt.plot(kappa,abs(gamma), label="solver dispersion",color='blue')
+    plt.plot(ky, gam, 'o',color='blue',label='solver solution')
+    plt.plot(kyons[0],gioco_gamma[int(max_pos[0,1])],'*',color='red',label = "computed solution")
     plt.xlabel("Azimuthal wave number $k_{\\theta} \\lambda_{De}$")
     plt.ylabel("Growth rate  $\\gamma/\\omega_{pi}$ ")
+    plt.grid(True)
 
     if unnorm:
-        plt.xlabel("Azimuthal wave number $k_{\\theta}$")
-        plt.ylabel("Growth rate  $\\gamma$ ")
+        plt.xlabel("Azimuthal wave number $k_{\\theta}$ 1/m")
+        plt.ylabel("Growth rate  $\\gamma$ rad/s")
+        plt.text(kappa[5]*u.m,gam*u.s/u.rad,"(b)")
     plt.legend()
+    plt.tight_layout()
 
 
-    plt.figure(figsize=(6,5))
-    plt.plot(kappa,omega, label="solver solution")
-    plt.title("n: {:}, $k_r$: {:.0f}".format(plasmaDensity,kz))
-    plt.plot(kyons[0],gioco_omega[int(max_pos[0,0])],'o',color='blue',label = "computed solution")
-    plt.plot(ky, ome, '*',color='magenta')
+    # plt.figure(figsize=(6,5))
+    plt.subplot(2,2,4)
+    plt.plot(kappa,omega, label="solver dispersion",color='blue')
+    # plt.title("n: {:}, $k_r$: {:.0f}".format(plasmaDensity,kz))
+    plt.plot(ky, ome, 'o',color='blue',label="solver solution")
+    plt.plot(kyons[0],gioco_omega[int(max_pos[0,0])],'*',color='red',label = "computed solution")
     # plt.plot(kyons[1],gioco_omega[int(max_pos[1,0])],'*',color='blue')
     # plt.plot(kyons[2],gioco_omega[int(max_pos[2,0])],'*',color='blue')
     plt.xlabel("Azimuthal wave number $k_{\\theta} \\lambda_{De}$")
     plt.ylabel("Pulsations  $\\omega/\\omega_{pi}$ ")
-    if unnorm:
-        plt.xlabel("Azimuthal wave number $k_{\\theta}$")
-        plt.ylabel("Pulsations  $\\omega$ ")
-    plt.legend()
+    plt.grid(True)
 
+    if unnorm:
+        plt.xlabel("Azimuthal wave number $k_{\\theta}$ 1/m")
+        plt.ylabel("Pulsations  $\\omega$ rad/s")
+        plt.text(kappa[5]*u.m,np.amax(omega)*u.s/u.rad,"(c)")
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(current + "/images_dispersion/" + "solution_verif{:}.png".format(density))
     zia = eps_MTSI_unnorm(omg=ome+1j*gam, kx=0.0, ky=1793.4/u.m, kz=kz, prt=prt,impr=True)
     # plt.close('all')
     # plt.show()
