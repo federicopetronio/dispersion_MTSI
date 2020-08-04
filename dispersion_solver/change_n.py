@@ -30,7 +30,6 @@ mi = 131*m_p.value
 from util.parameters import PlasmaParameters
 Te = 10*u.eV
 plasmaDensity=2e17 *u.m**(-3)
-pp = PlasmaParameters(plasmaDensity=plasmaDensity, electronTemperature=Te)
 
 #~~~~~~~~~~~~~~~~~~~~~~
 from datetime import date, datetime

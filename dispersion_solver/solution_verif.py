@@ -8,4 +8,5 @@ kz = 0.030
 densities = [5e16,2e17]
 for den in densities:
     kappa, gamma, omega = verification_dispersion(kz, density=den,unnorm=False)
+
 plt.show()

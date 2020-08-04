@@ -10,7 +10,7 @@ from astropy import units as u
 import os
 
 caso = 8
-ky = 0.1554
+ky = 0.104
 kz = 0.0258
 gamma_exp = 0.091
 omega_exp = 0.3813
@@ -29,13 +29,21 @@ prt_base=PlasmaParameters(plasmaDensity=density*u.m**(-3),
                     electricField=1e4*u.V/u.m,
                     ionTemperature=0.5*u.eV)
 
+# Lz = 0.02*u.m
+# kz = 2*np.pi/Lz*prt_base.Debye_length
+# print(kz)
+# ky = np.pi*100/u.m*prt_base.Debye_length*1000/511
+# print(ky)
+# kys = ky*[1,2,3,4]*u.m
+# print(kys)
 
-# kappa = np.ones(Nkys)
+
 gamma = np.ones(Nkys)
 omega = np.ones(Nkys)
 
 current = os.getcwd()
 path = current + "/dispersion_data/change_n/{:}/".format(density)
+# path = current + "/dispersion_data/change_n_E/20000.0_2e+17/"
 
 omega, gamma, kz = precedent_openfile(kz, Nkys=Nkys, path=path)
 
@@ -50,6 +58,8 @@ plt.title("Radial wave number: {:.4f}".format(kz))
 plt.xlabel("Azimuthal wave number $k_{\\theta} \cdot \\lambda_D$")
 plt.ylabel("Growth rate $\\gamma / \\omega_{pi}$ and frequency $ \\omega / \\omega_{pi}$ ")
 
+[plt.axvline(x=xfct*prt_base.Debye_length, linestyle='dashed') for xfct in [492.79884762,  985.59769524, 1478.39654287, 1971.19539049]/u.m]
+# [plt.axvline(x=xfct, linestyle='dashed') for xfct in kys/u.m]
 plt.grid(True)
 plt.savefig(current + "/images_dispersion/" + "{:}_case_ky={:.3f}_kz={:.3f}.png".format(caso,ky,kz))
 plt.show()

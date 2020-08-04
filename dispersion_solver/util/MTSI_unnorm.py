@@ -9,7 +9,7 @@ from astropy import units as u
 
 
 
-def eps_MTSI_unnorm(omg, kx, ky, kz, prt=PlasmaParameters()):
+def eps_MTSI_unnorm(omg, kx, ky, kz, prt=PlasmaParameters(),impr=False):
     """Plamsa permitivity for the MTSI, correspondr to the function to solve to find the dispertion relation
     :param omg: (complex) frequency $\omega$, normalized by the ion plasma frequency
     :param kx: wave number in the $x$ direction, normalised by the Debye length. Is supposed to be 0.
@@ -34,5 +34,10 @@ def eps_MTSI_unnorm(omg, kx, ky, kz, prt=PlasmaParameters()):
     iEps = prt.ionPlasmaFrequency**2/omg**2
     eEpsz = prt.electronPlasmaFrequency**2 * ( kz**2 ) / ( (omg - ky * prt.driftSpeed*u.rad)**2 * k2 )
     eEpsy = prt.electronPlasmaFrequency**2 * ( ky**2 ) / ( ((omg - ky * prt.driftSpeed*u.rad)**2 - (prt.electronCyclotronFrequency*u.rad)**2)* k2 )
-    # print(eEpsz)
+    if impr:
+        print("1 - iEps - eEpsz - eEpsy : ",1 - iEps - eEpsz - eEpsy)
+        print("iEps: ",iEps)
+        print("eEpsz: ",eEpsz)
+        print("eEpsy: ",eEpsy)
+        print("diff: ", (omg - ky * prt.driftSpeed*u.rad)**2, (prt.electronCyclotronFrequency*u.rad))
     return 1 - iEps - eEpsz - eEpsy

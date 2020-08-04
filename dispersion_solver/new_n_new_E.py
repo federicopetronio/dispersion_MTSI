@@ -30,7 +30,6 @@ from util.parameters import PlasmaParameters
 Te = 10*u.eV
 plasmaDensity=2e17 *u.m**(-3)
 electricField = 2e4*u.V/u.m
-pp = PlasmaParameters(plasmaDensity=plasmaDensity, electronTemperature=Te)
 
 #~~~~~~~~~~~~~~~~~~~~~~
 from datetime import date, datetime
@@ -69,7 +68,7 @@ prt=PlasmaParameters(plasmaDensity=plasmaDensity,
 Lr = 0.0128*u.m
 kz = 2*np.pi*prt.Debye_length/Lr
 
-kzetas = np.arange(0.001,0.055,0.002)
+kzetas = np.arange(0.0160,0.0171,0.0005)
 
 
 try:
@@ -110,10 +109,12 @@ dispersion_clean = np.zeros((len(kzetas),4,Nkys))
 
 for i,kz in enumerate(kzetas):
     print("kz * lambda_d = ",kz)
-    omega_1, gamma_1 = precedent_openfile(kz=kz,Nkys=Nkys,path=path2)
+    omega_1, gamma_1,kz1 = precedent_openfile(kz=kz,Nkys=Nkys,path=path2)
     for indice in np.arange(len(omega_1)):
         if omega_1[indice]>0.5 :
             omega_1[indice] = omega_1[indice-2]
+        if omega_1[indice]<10:
+            omega_1[indice] = 1e-8
 
     gamma_1=abs(gamma_1)
     ky_1 = np.arange(kymin,kymax,pas)

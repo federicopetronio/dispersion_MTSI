@@ -40,7 +40,7 @@ def precedent_openfile(kz,Nkys=920,path=None):
             print("kz_open : {:.4f}".format(kz) )
             break
         except :
-            # print(path + "kz={:5.4f}".format(kz) + "_omega_r.txt")
+            print(path + "kz={:5.4f}".format(kz) + "_omega_r.txt")
             kz = kz + 0.0001
             # break
 
@@ -82,6 +82,7 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
 
     current = os.getcwd()
     path = current + "/dispersion_data/change_n/{:}/".format(density)
+
     Te = 10*u.eV
     plasmaDensity=density*u.m**(-3)
 
@@ -97,14 +98,20 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
     omega,gamma,kz = precedent_openfile(kz,path=path)
     # print("kz_opened : {:.4f}".format(kz) )
 
+
+    ky,ome,gam = find_max_gamma(kz,path=path)
+
+    ind_ky = list(kappa).index(ky)
+    ind_ky = int(ind_ky*0.95)
+    ky = kappa[ind_ky]
+    ome = omega[ind_ky]
+    gam = gamma[ind_ky]
+
+
     if unnorm:
         kappa = kappa/prt.Debye_length
         omega = omega*prt.ionPlasmaFrequency
         gamma = gamma*prt.ionPlasmaFrequency
-
-    ky,ome,gam = find_max_gamma(kz,path=path)
-    print("max_ome: ", ome)
-    print("max_gam: ", gam)
 
     # plt.figure()
     # plt.plot(kappa,gamma)
@@ -117,16 +124,26 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
     if unnorm:
         ky = ky/prt.Debye_length
         kz = kz/prt.Debye_length
-        gioco_omega = np.arange(0.8*ome,1.2*ome,0.002)*prt.ionPlasmaFrequency
-        gioco_gamma = np.arange(0.9*gam,1.1*gam,0.002)*prt.ionPlasmaFrequency
-        ome = ome*prt.ionPlasmaFrequency
         gam = gam*prt.ionPlasmaFrequency
+        ome = ome*prt.ionPlasmaFrequency
+
+        # ome = 13920507.92438155 *u.rad / u.s
+        # gam = 23312202.01594126 *u.rad / u.s
+        # ky =  1793.4063823828753 / u.m
+        # kz =  490.87385212340513 / u.m
+
+        gioco_omega = np.arange(0.5*ome/(u.rad/u.s),1.5*ome/(u.rad/u.s),ome/(u.rad/u.s)/100)*u.rad/u.s
+        gioco_gamma = np.arange(0.5*gam/(u.rad/u.s),1.5*gam/(u.rad/u.s),gam/(u.rad/u.s)/100)*u.rad/u.s
         kyons = kyons/prt.Debye_length
         # print(ky)
         # print("gioco_omega",gioco_omega,"\n gioco_gamma",gioco_gamma)
         # print("ome", ome, gioco_omega[int(len(gioco_omega)/2)])
         # print("gam", gam, gioco_gamma[int(len(gioco_gamma)/2)])
-
+    print("density: ", plasmaDensity)
+    print("max_ome: ", ome)
+    print("max_gam: ", gam)
+    print("ky = ",ky)
+    print("kz = ",kz)
 
     solution_real = np.zeros((len(gioco_omega),len(gioco_gamma)))
     solution_imag = np.zeros((len(gioco_omega),len(gioco_gamma)))
@@ -155,7 +172,7 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
 
 
     plt.figure()
-    plt.title("invers of susceptibility, "+"density {:}".format(plasmaDensity))
+    plt.title("n: {:}, ".format(plasmaDensity) + "$k_{t}$: "+"{:.0f}, $k_r$: {:.0f}".format(ky,kz))
     if unnorm:
         plt.pcolor(gioco_gamma*u.s/u.rad,gioco_omega*u.s/u.rad, abs(solution_real+1j*solution_imag))
     else:
@@ -166,10 +183,10 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
     if unnorm:
         plt.xlabel("$\gamma$")
         plt.ylabel("$\omega$")
-    plt.colorbar()
+    plt.colorbar().set_label("$1 / \chi$")
 
     plt.figure(figsize=(6,5))
-    plt.title("density {:}".format(plasmaDensity))
+    plt.title("n: {:}, $k_r$: {:.0f}".format(plasmaDensity,kz))
     plt.plot(kappa,abs(gamma), label="solver solution")
     plt.plot(kyons[0],gioco_gamma[int(max_pos[0,1])],'o',color='blue',label = "computed solution")
     plt.plot(ky, gam, '*',color='magenta')
@@ -184,7 +201,7 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
 
     plt.figure(figsize=(6,5))
     plt.plot(kappa,omega, label="solver solution")
-    plt.title("density {:}".format(plasmaDensity))
+    plt.title("n: {:}, $k_r$: {:.0f}".format(plasmaDensity,kz))
     plt.plot(kyons[0],gioco_omega[int(max_pos[0,0])],'o',color='blue',label = "computed solution")
     plt.plot(ky, ome, '*',color='magenta')
     # plt.plot(kyons[1],gioco_omega[int(max_pos[1,0])],'*',color='blue')
@@ -196,6 +213,7 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
         plt.ylabel("Pulsations  $\\omega$ ")
     plt.legend()
 
+    zia = eps_MTSI_unnorm(omg=ome+1j*gam, kx=0.0, ky=1793.4/u.m, kz=kz, prt=prt,impr=True)
     # plt.close('all')
     # plt.show()
     return kappa,gamma,omega

@@ -28,14 +28,13 @@ prt_base=PlasmaParameters(plasmaDensity=density*u.m**(-3),
 Lr=0.0128*u.m
 kz = 2*np.pi/Lr
 
-# densities = [5e16,1e17,2e17,3e17]
-densities = [5e16,2e17]
+densities = [5e16,1e17,2e17,3e17]
+# densities = [2e17,5e16]
 
 kappa = np.ones((len(densities),Nkys))
 gamma = np.ones((len(densities),Nkys))
 omega = np.ones((len(densities),Nkys))
 
-kz_zz = [0.052,0.026]
 for index,dindondensity in enumerate(densities):
     prtd=PlasmaParameters(plasmaDensity=dindondensity*u.m**(-3),
                         electronTemperature=10*u.eV,
@@ -67,6 +66,7 @@ plt.ylabel("Growth rate  $\\omega$ ")
 
 plt.grid(True)
 currentdir = os.getcwd()
-plt.savefig(currentdir + "/images_dispersion/" + "invariance_density.png")
+# plt.savefig(currentdir + "/images_dispersion/" + "invariance_density.png")
+
 plt.show()
 plt.close()
