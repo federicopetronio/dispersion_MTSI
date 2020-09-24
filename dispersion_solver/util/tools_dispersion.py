@@ -48,6 +48,10 @@ def precedent_openfile(kz,Nkys=920,path=None):
     gamma_read = np.genfromtxt(path + "kz={:5.4f}".format(kz) + "_gamma.txt", delimiter="  ", unpack=False)
 
     # print("Len",len(omega_read))
+
+    if kz > 0.0516 :
+        Nkys = 1844
+
     omega = np.ones(Nkys)*1e-12
     gamma = np.ones(Nkys)*1e-12
 
@@ -76,21 +80,23 @@ def find_max_gamma(kz,path=None):
 
 
 
-def verification_dispersion(kz,density=5e16,unnorm = False):
+def verification_dispersion(kz,density=5e16,unnorm = False,EF=1e4):
     from util.parameters import PlasmaParameters
     from astropy.constants import m_e, m_p
     from astropy import units as u
 
     current = os.getcwd()
     path = current + "/dispersion_data/change_n/{:}/".format(density)
+    # path = current + "/dispersion_data/change_n_E/20000.0_1e+17/"
+
 
     Te = 10*u.eV
     plasmaDensity=density*u.m**(-3)
-
+    EF = EF*u.V/u.m
     prt=PlasmaParameters(plasmaDensity=plasmaDensity,
                         electronTemperature=10*u.eV,
                         magneticField=0.02*u.T,
-                        electricField=1e4*u.V/u.m,
+                        electricField=EF,
                         ionTemperature=0.5*u.eV)
 
     kx = 0.0
@@ -103,7 +109,7 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
     ky,ome,gam = find_max_gamma(kz,path=path)
 
     ind_ky = list(kappa).index(ky)
-    # ind_ky = int(ind_ky*0.65)
+    # ind_ky = int(ind_ky*1.5)
     ky = kappa[ind_ky]
     ome = omega[ind_ky]
     gam = gamma[ind_ky]
@@ -166,6 +172,7 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
         abs_sol=abs(solution_real+1j*solution_imag)
         max_pos[kk,:] = np.unravel_index(abs(abs_sol).argmax(), abs_sol.shape)
         break
+    print("min_calc = ", 1/abs(abs_sol).argmax())
     # print("dist_ome ", ome/prt.ionPlasmaFrequency,gioco_omega[int(max_pos[0,0])]/prt.ionPlasmaFrequency)
     # print("dist_ome ", ome/prt.ionPlasmaFrequency-gioco_omega[int(max_pos[0,0])]/prt.ionPlasmaFrequency)
     # print("dist_gam ", gam/prt.ionPlasmaFrequency,gioco_gamma[int(max_pos[0,1])]/prt.ionPlasmaFrequency)
@@ -229,8 +236,8 @@ def verification_dispersion(kz,density=5e16,unnorm = False):
         plt.text(kappa[5]*u.m,np.amax(omega)*u.s/u.rad,"(c)")
     plt.legend()
     plt.tight_layout()
-    plt.savefig(current + "/images_dispersion/" + "solution_verif{:}.png".format(density))
-    zia = eps_MTSI_unnorm(omg=ome+1j*gam, kx=0.0, ky=1793.4/u.m, kz=kz, prt=prt,impr=True)
+    # plt.savefig(current + "/images_dispersion/" + "solution_verif{:}.png".format(density))
+    # zia = eps_MTSI_unnorm(omg=ome+1j*gam, kx=0.0, ky=1793.4/u.m, kz=kz, prt=prt,impr=True)
     # plt.close('all')
     # plt.show()
     return kappa,gamma,omega

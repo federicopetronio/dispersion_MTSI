@@ -4,8 +4,6 @@ from plasmapy.formulary.parameters import plasma_frequency, Debye_length
 import directsolver
 import os
 
-from matplotlib import rc
-
 from functools import partial
 from importlib import reload
 
@@ -20,8 +18,7 @@ from directsolver import solvekys
 from scipy import optimize
 
 import matplotlib.pyplot as plt
-plt.rc('text', usetex=True)
-plt.rc('font', family='serif')
+plt.rcParams["font.family"] = "STIXGeneral"
 import numpy as np
 from astropy.constants import m_e, m_p
 me = m_e.value
@@ -43,7 +40,7 @@ from datetime import date, datetime
 sentierino = os.getcwd()
 
 kymin = 0.001
-kymax = 0.20
+kymax = 0.22
 
 pas = 0.00023803827751196175
 
@@ -62,19 +59,20 @@ E_field = [10000.0,15000.0,20000.0]
 for ind,den in enumerate(E_field):
     path = sentierino + "/dispersion_data/change_E_Field/{:}/".format(den)
 
-    omega1, gamma1 = precedent_openfile(kz,Nkys,path)
+    omega1, gamma1, ksa= precedent_openfile(kz,Nkys+1,path)
 
     # plt.plot(kysref1, dispersion[i,1,:], "green", label="$\omega_r$ solver")
     # plt.plot(kysref1, dispersion[i,2,:], "magenta", label="$\gamma$ solver")
     plt.plot(kys,abs(gamma1),label = "E = {:}".format(den)+" V/m")
     plt.xlabel("Azimuthal wave number $k_{\\theta} \\lambda_{De}$")
     plt.ylabel("Pulsations  $\\gamma/\\omega_{pi} $")
-    plt.tight_layout()
+    print("okkkk")
+    # plt.tight_layout()
 
     #plt.xlim(left=0)
     #plt.ylim(bottom=0)
 plt.legend()
 plt.tight_layout()
 plt.savefig(sentierino   + "/images_dispersion/dispersion_kz={:5.4f}_gamma_E.png".format(kz))
-# plt.show()
+plt.show()
 plt.close()

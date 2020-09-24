@@ -11,6 +11,7 @@ import os
 
 kz = 0.0370/u.m
 density = 5e16
+electricField=1e4
 # max_pos = verification_dispersion(kz, density=density,unnorm=True)
 
 kymin = 0.001
@@ -23,14 +24,17 @@ print(Nkys)
 prt_base=PlasmaParameters(plasmaDensity=density*u.m**(-3),
                     electronTemperature=10*u.eV,
                     magneticField=0.02*u.T,
-                    electricField=1e4*u.V/u.m,
+                    electricField=electricField*u.V/u.m,
                     ionTemperature=0.5*u.eV)
-Lr=0.015*u.m
+Lr=0.0128*u.m
+L_theta = 0.01345*u.m
 kz = 2*np.pi/Lr
+kyy = 2*np.pi/L_theta
 
-# densities = [5e16,1e17,2e17,3e17]
+
+densities = [5e16,1e17,2e17,3e17]
 # densities = [2e17,5e16]
-densities = [1e17,1e17,1e17]
+# densities = [1e17,1e17,1e17]
 
 kappa = np.ones((len(densities),Nkys))
 gamma = np.ones((len(densities),Nkys))
@@ -40,34 +44,38 @@ for index,dindondensity in enumerate(densities):
     prtd=PlasmaParameters(plasmaDensity=dindondensity*u.m**(-3),
                         electronTemperature=10*u.eV,
                         magneticField=0.02*u.T,
-                        electricField=1e4*u.V/u.m,
+                        electricField=electricField*u.V/u.m,
                         ionTemperature=0.5*u.eV)
     kz_z = kz*prtd.Debye_length
     # use this to verify the invariance with respect to the density
 
-    # kz_z = kz_zz[index]
     print("kz_z",kz_z)
-    # kz_z = kz/prt_base.Debye_length*prtd.Debye_length
-    # print(kz_z)
-    kappa[index,:], gamma[index,:], omega[index,:] = verification_dispersion(kz_z, density=dindondensity,unnorm=True)
+    # kz_z = 0.005
+    kappa[index,:], gamma[index,:], omega[index,:] = verification_dispersion(kz_z, density=dindondensity,EF=electricField,unnorm=True)
 
-plt.figure(figsize=(8,6))
+plt.figure(figsize=(8,4))
+plt.subplot(1,2,1)
 for index,dindondensity in enumerate(densities):
-    plt.plot(kappa[index,:],abs(gamma[index,:]),"--",label=str(dindondensity))
-plt.legend()
-plt.xlabel("Azimuthal wave number $k_{\\theta}$")
-plt.ylabel("Growth rate  $\\gamma$ ")
+    plt.plot(kappa[index,:],abs(gamma[index,:]),linestyle=(0, (3, 3)),linewidth=1.5,label=str(dindondensity*u.m**(-3)))
+# plt.legend()
+plt.grid(True)
+plt.text(kappa[3,10],np.amax(gamma),"(a)")
+plt.xlabel("Azimuthal wave number $k_{\\theta}$  1/m")
+plt.ylabel("Growth rate  $\\gamma$ rad/s")
 
-plt.figure(figsize=(8,6))
+# plt.figure(figsize=(8,6))
+
+plt.subplot(1,2,2)
 for index,dindondensity in enumerate(densities):
-    plt.plot(kappa[index,:],abs(omega[index,:]),"--",label=str(dindondensity))
+    plt.plot(kappa[index,:],abs(omega[index,:]),linestyle=(0, (3, 3)),label=str(dindondensity*u.m**(-3)))
 plt.legend()
-plt.xlabel("Azimuthal wave number $k_{\\theta}$")
-plt.ylabel("Growth rate  $\\omega$ ")
+plt.text(kappa[3,10],np.amax(omega),"(b)")
+plt.xlabel("Azimuthal wave number $k_{\\theta}$ 1/m")
+plt.ylabel("Frequency  $\\omega$ rad/s")
 
 plt.grid(True)
 currentdir = os.getcwd()
-# plt.savefig(currentdir + "/images_dispersion/" + "invariance_density.png")
+plt.savefig(currentdir + "/images_dispersion/" + "invariance_density.png")
 
 plt.show()
 plt.close()

@@ -68,7 +68,7 @@ prt=PlasmaParameters(plasmaDensity=plasmaDensity,
 Lr = 0.0128*u.m
 kz = 2*np.pi*prt.Debye_length/Lr
 
-kzetas = np.arange(0.001,0.050,0.002)
+kzetas = np.arange(0.490,0.0530,0.002)
 
 
 try:

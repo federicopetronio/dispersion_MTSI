@@ -28,7 +28,7 @@ mi = 131*m_p.value
 
 from util.parameters import PlasmaParameters
 Te = 10*u.eV
-plasmaDensity=2e17 *u.m**(-3)
+plasmaDensity=1e17 *u.m**(-3)
 electricField = 2e4*u.V/u.m
 
 #~~~~~~~~~~~~~~~~~~~~~~
@@ -68,7 +68,7 @@ prt=PlasmaParameters(plasmaDensity=plasmaDensity,
 Lr = 0.0128*u.m
 kz = 2*np.pi*prt.Debye_length/Lr
 
-kzetas = np.arange(0.0160,0.0171,0.0005)
+kzetas = np.arange(0.0160,0.091,0.0005)
 
 
 try:
