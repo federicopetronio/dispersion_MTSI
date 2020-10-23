@@ -29,7 +29,7 @@ mi = 131*m_p.value
 from util.parameters import PlasmaParameters
 Te = 10*u.eV
 plasmaDensity=5e16 *u.m**(-3)
-electricField = 1.5e4*u.V/u.m
+electricField = 3e4*u.V/u.m
 pp = PlasmaParameters(plasmaDensity=plasmaDensity, electronTemperature=Te)
 
 #~~~~~~~~~~~~~~~~~~~~~~

@@ -28,12 +28,12 @@ mi = 131*m_p.value
 
 from util.parameters import PlasmaParameters
 Te = 10*u.eV
-plasmaDensity=1e17 *u.m**(-3)
-electricField = 2e4*u.V/u.m
+plasmaDensity=5e16 *u.m**(-3)
+electricField = 3e4*u.V/u.m
+pp = PlasmaParameters(plasmaDensity=plasmaDensity, electronTemperature=Te)
 
 #~~~~~~~~~~~~~~~~~~~~~~
 from datetime import date, datetime
-
 #calculate kz
 
 sentierino = os.getcwd()
@@ -56,7 +56,13 @@ path2 = sentierino + "/dispersion_data/change_n_E/{:}_{:}/".format(electricField
 
 # path = "/home/petronio/Nextcloud/theseLPP/runs/runs_benchmark/MTSI/dispersion_MTSI/dispersion_solver/dispersion_data/"
 print(path2)
-path3 = sentierino + "/dispersion_data/change_n/{:}/".format(plasmaDensity*u.m**(3))
+path3 = sentierino + "/dispersion_data/change_n_E/{:}_{:}/".format(30000.0,2e+17)
+path3 = "/home/petronio/dispersion_MTSI/dispersion_solver/dispersion_data/change_n/5e+16/"
+print(path3)
+# path3 = "/home/petronio/dispersion_MTSI/dispersion_solver/dispersion_data/change_n_E/20000.0_2e+17/"
+# print(path3)
+
+# path3 = sentierino + "/dispersion_data/change_n/{:}/".format(plasmaDensity*u.m**(3))
 
 kx = 0.0
 prt=PlasmaParameters(plasmaDensity=plasmaDensity,
@@ -68,7 +74,7 @@ prt=PlasmaParameters(plasmaDensity=plasmaDensity,
 Lr = 0.0128*u.m
 kz = 2*np.pi*prt.Debye_length/Lr
 
-kzetas = np.arange(0.0160,0.091,0.0005)
+kzetas = np.arange(0.0150,0.053,0.001)
 
 
 try:
@@ -109,27 +115,51 @@ dispersion_clean = np.zeros((len(kzetas),4,Nkys))
 
 for i,kz in enumerate(kzetas):
     print("kz * lambda_d = ",kz)
-    omega_1, gamma_1,kz1 = precedent_openfile(kz=kz,Nkys=Nkys,path=path2)
-    for indice in np.arange(len(omega_1)):
-        if omega_1[indice]>0.5 :
-            omega_1[indice] = omega_1[indice-2]
-        if omega_1[indice]<10:
-            omega_1[indice] = 1e-8
+    if primo:
+        omega_1, gamma_1, kz1 = precedent_openfile(kz=kz,Nkys=Nkys,path=path2)
+#         primo = False
 
+    gamma_1=abs(gamma_1)
+
+    for indice in np.arange(len(omega_1)):
+        if abs(omega_1[indice])>1 :
+            omega_1[indice] = omega_1[indice-1]
+        if abs(gamma_1[indice])>1 :
+            gamma_1[indice] = gamma_1[indice-1]
+
+#     for indice in np.arange(len(omega_1)):
+#         if abs(omega_1[len(omega_1)-indice-1])>0.5 :
+#             omega_1[len(omega_1)-indice-1] = omega_1[len(omega_1)-indice-1-1]
+#         if abs(gamma_1[len(omega_1)-indice-1])>0.9 :
+#             gamma_1[len(omega_1)-indice-1] = gamma_1[len(omega_1)-indice-1+1]
     gamma_1=abs(gamma_1)
     ky_1 = np.arange(kymin,kymax,pas)
     ky_1=ky_1[:len(omega_1)]
-    # primo = False
 
     wrfunct = lambda k: precedent_guess_mod(k=k,ky=ky_1[:len(omega_1)],ome=omega_1,gam=gamma_1)
 
     kysref1,  xsref1 = solvekys(plasmaEps, kx=kx, kz=kz, kymin=kymin, kymax=kymax,
                              parall=False, wrfunct=wrfunct,Nkys=Nkys,already_solved=True,root=False)
+    xsref1 = abs(xsref1)
+
+    for j in np.arange(0,Nkys):
+        if xsref1[j,2] >1e-4 :
+            xsref1[j,0] = xsref1[j-1,0]
+            xsref1[j,1] = xsref1[j-1,1]
+        if xsref1[j,0]>1.5 :
+            xsref1[j,0] = xsref1[j-1,0]
+        if abs(xsref1[j,1])>1.5 :
+            xsref1[j,1]=xsref1[j-1,1]
 
     dispersion[i,0,:] = kysref1
     dispersion[i,1,:] = xsref1[:,0]
     dispersion[i,2,:] = xsref1[:,1]
     dispersion[i,3,:] = xsref1[:,2]
+
+#     for hh in np.arange(2,Nkys):
+#         if xsref1[Nkys-hh,2]>1e-5 :
+#             xsref1[Nkys-hh,1] = xsref1[Nkys-hh+1,1]
+#             xsref1[Nkys-hh,0] = xsref1[Nkys-hh+1,0]
 
     f = open(path2   + "/kz={:5.4f}".format(kz) + "_omega_r.txt","w+")
     for ind in range(len(kysref1)):
@@ -143,8 +173,9 @@ for i,kz in enumerate(kzetas):
     # eliminates the points with a too large error
     for j in np.arange(0,Nkys):
         if dispersion[i,3,j]>0.5 :
-            dispersion[i,1,j] = 1e-12
-            dispersion[i,2,j] = 1e-12
+            dispersion[i,1,j] = dispersion[i,1,j-1]
+            dispersion[i,2,j] = dispersion[i,2,j-1]
+            print("error error: ", i,j,dispersion[i,1,j],dispersion[i,2,j],dispersion[i,3,j])
 
 
 
@@ -160,7 +191,8 @@ for i,kz in enumerate(kzetas):
     plt.tight_layout()
     for j in np.arange(0,Nkys):
         if dispersion[i,3,j]>0.5 :
-            plt.plot(kysref1[j], dispersion[i,2,j], "*",color="blue")
+#             plt.plot(kysref1[j], dispersion[i,2,j], "*",color="blue")
+            plt.plot(kysref1[j], 1e-5, "*",color="blue")
 
     #plt.xlim(left=0)
     #plt.ylim(bottom=0)
@@ -182,7 +214,9 @@ for i,kz in enumerate(kzetas):
     plt.tight_layout()
     for j in np.arange(0,Nkys):
         if dispersion[i,3,j]>0.5 :
-            plt.plot(kysref1[j], dispersion[i,2,j], "*",color="blue")
+#             plt.plot(kysref1[j], dispersion[i,1,j], "*",color="blue")
+            plt.plot(kysref1[j], 1e-5, "*",color="blue")
+
 
     plt.tight_layout()
     plt.savefig(path2   + "/images_dispersion/dispersion_kz={:5.4f}_omega.png".format(kz))
@@ -193,17 +227,7 @@ for i,kz in enumerate(kzetas):
     gamma_1 = dispersion[i,2,:]
     argmax_1 = np.argmax(gamma_1)
     # print("max : ", argmax_1, gamma_1[argmax_1])
-    cont = 0
-    for j in np.arange(0,Nkys):
-        if j<argmax_1:
-            if gamma_1[j-cont]<1e-8 :
-                ky_1 = np.delete(ky_1,j-cont)
-                omega_1 = np.delete(omega_1,j-cont)
-                gamma_1 = np.delete(gamma_1,j-cont)
-                cont = cont+1
-        else:
-            if gamma_1[j-cont]<0 :
-                gamma_1[j-cont] = -gamma_1[j-cont]
+
 
 
     plt.figure(figsize=(6,5))

@@ -17,8 +17,9 @@ from util.tools_dispersion import precedent_openfile
 from directsolver import solvekys
 from scipy import optimize
 
+import rcparams
+
 import matplotlib.pyplot as plt
-plt.rcParams["font.family"] = "STIXGeneral"
 import numpy as np
 from astropy.constants import m_e, m_p
 me = m_e.value
@@ -63,8 +64,8 @@ for ind,den in enumerate(E_field):
 
     # plt.plot(kysref1, dispersion[i,1,:], "green", label="$\omega_r$ solver")
     # plt.plot(kysref1, dispersion[i,2,:], "magenta", label="$\gamma$ solver")
-    plt.plot(kys,abs(gamma1),label = "E = {:}".format(den)+" V/m")
-    plt.xlabel("Azimuthal wave number $k_{\\theta} \\lambda_{De}$")
+    plt.plot(kys,abs(gamma1),label = "E = {:.0f}".format(den/1000)+" kV/m")
+    plt.xlabel("Azimuthal wave number $k_{\\theta}\cdot \\lambda_{De}$")
     plt.ylabel("Pulsations  $\\gamma/\\omega_{pi} $")
     print("okkkk")
     # plt.tight_layout()
@@ -73,6 +74,8 @@ for ind,den in enumerate(E_field):
     #plt.ylim(bottom=0)
 plt.legend()
 plt.tight_layout()
-plt.savefig(sentierino   + "/images_dispersion/dispersion_kz={:5.4f}_gamma_E.png".format(kz))
+# plt.savefig(sentierino   + "/images_dispersion/dispersion_kz={:5.4f}_gamma_E.png".format(kz))
+plt.savefig('/home/petronio/Nextcloud/theseLPP/reports/MTSI/images/'+ 'differentE.png')
+
 plt.show()
 plt.close()

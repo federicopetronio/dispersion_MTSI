@@ -8,6 +8,8 @@ from astropy.constants import m_e, m_p
 from astropy import units as u
 import os
 
+import rcparams
+
 
 kz = 0.0370/u.m
 density = 5e16
@@ -33,6 +35,7 @@ kyy = 2*np.pi/L_theta
 
 
 densities = [5e16,1e17,2e17,3e17]
+densities = [5e16]
 # densities = [2e17,5e16]
 # densities = [1e17,1e17,1e17]
 
@@ -53,29 +56,39 @@ for index,dindondensity in enumerate(densities):
     # kz_z = 0.005
     kappa[index,:], gamma[index,:], omega[index,:] = verification_dispersion(kz_z, density=dindondensity,EF=electricField,unnorm=True)
 
+plt.close("all")
+import mpltex
+
 plt.figure(figsize=(8,4))
+
 plt.subplot(1,2,1)
+linestyles = mpltex.linestyle_generator(lines=['-'], hollow_styles=[])
 for index,dindondensity in enumerate(densities):
-    plt.plot(kappa[index,:],abs(gamma[index,:]),linestyle=(0, (3, 3)),linewidth=1.5,label=str(dindondensity*u.m**(-3)))
+    # plt.plot(kappa[index,:],abs(gamma[index,:]),linestyle=(0, (3, 3)),linewidth=1.5,label=str(dindondensity*u.m**(-3)),alpha=0.4)
+    plt.plot(kappa[index,:],abs(gamma[index,:]),linewidth=1.5,label=str(dindondensity)+" $m^{-3}$",**next(linestyles),alpha=0.6,markevery=50)
+
 # plt.legend()
 plt.grid(True)
 plt.text(kappa[3,10],np.amax(gamma),"(a)")
-plt.xlabel("Azimuthal wave number $k_{\\theta}$  1/m")
-plt.ylabel("Growth rate  $\\gamma$ rad/s")
+plt.xlabel("Azimuthal wave number $k_{\\theta}$  [1/m]")
+plt.ylabel("Growth rate  $\\gamma$ [rad/s]")
 
 # plt.figure(figsize=(8,6))
 
 plt.subplot(1,2,2)
+linestyles = mpltex.linestyle_generator(lines=['-'], hollow_styles=[])
 for index,dindondensity in enumerate(densities):
-    plt.plot(kappa[index,:],abs(omega[index,:]),linestyle=(0, (3, 3)),label=str(dindondensity*u.m**(-3)))
+    plt.plot(kappa[index,:],abs(omega[index,:]),label=str(dindondensity)+" $m^{-3}$",**next(linestyles),alpha=0.6,markevery=50)
 plt.legend()
 plt.text(kappa[3,10],np.amax(omega),"(b)")
-plt.xlabel("Azimuthal wave number $k_{\\theta}$ 1/m")
-plt.ylabel("Frequency  $\\omega$ rad/s")
+plt.xlabel("Azimuthal wave number $k_{\\theta}$ [1/m]")
+plt.ylabel("Frequency  $\\omega$ [rad/s]")
+plt.tight_layout()
 
 plt.grid(True)
 currentdir = os.getcwd()
 plt.savefig(currentdir + "/images_dispersion/" + "invariance_density.png")
+# plt.savefig('/home/petronio/Nextcloud/theseLPP/reports/MTSI/images/'+ 'invariance_density.png')
 
 plt.show()
 plt.close()

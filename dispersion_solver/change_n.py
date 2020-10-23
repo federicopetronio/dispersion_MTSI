@@ -29,7 +29,7 @@ mi = 131*m_p.value
 
 from util.parameters import PlasmaParameters
 Te = 10*u.eV
-plasmaDensity=2e17 *u.m**(-3)
+plasmaDensity=5e16 *u.m**(-3)
 
 #~~~~~~~~~~~~~~~~~~~~~~
 from datetime import date, datetime
@@ -67,7 +67,7 @@ prt=PlasmaParameters(plasmaDensity=plasmaDensity,
 Lr = 0.0128*u.m
 kz = 2*np.pi*prt.Debye_length/Lr
 
-kzetas = np.arange(0.026,0.028,0.002)
+kzetas = np.arange(0.0172,0.0174,0.0174)
 
 try:
     os.mkdir(path2 + "/images_dispersion")
@@ -105,7 +105,7 @@ dispersion_clean = np.zeros((len(kzetas),4,Nkys))
 for i,kz in enumerate(kzetas):
     print("kz * lambda_d = ",kz)
     if primo:
-        omega_1, gamma_1, kz1 = precedent_openfile(kz=kz,Nkys=Nkys,path="/home/petronio/Nextcloud/theseLPP/runs/runs_benchmark/MTSI/dispersion_MTSI/dispersion_solver/dispersion_data/change_n/{:}/".format(plasmaDensity*u.m**(3)))
+        omega_1, gamma_1, kz1 = precedent_openfile(kz=kz,Nkys=Nkys,path=path2)
         for indice in np.arange(len(omega_1)):
             if omega_1[indice]>0.5 :
                 omega_1[indice] = omega_1[indice-2]

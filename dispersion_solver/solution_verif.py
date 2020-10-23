@@ -32,7 +32,7 @@ for index,den in enumerate(densities):
                         electricField=1e4*u.V/u.m,
                         ionTemperature=0.5*u.eV)
     kz_z = kz*prtd.Debye_length
-    print(kz_z)
+    print("kz_z",kz_z)
     kappa[index,:], gamma[index,:], omega[index,:] = verification_dispersion(kz_z, density=den,unnorm=False)
 
 plt.figure(figsize=(8,4))
@@ -69,7 +69,7 @@ plt.ylabel("Frequency  $\\omega$ 1/m")
 
 plt.grid(True)
 currentdir = os.getcwd()
-plt.savefig(currentdir + "/images_dispersion/" + "invariance_density_norm.png")
-# plt.show()
+# plt.savefig(currentdir + "/images_dispersion/" + "invariance_density_norm.png")
+plt.show()
 
 plt.close()

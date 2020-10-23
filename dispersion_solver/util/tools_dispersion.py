@@ -35,6 +35,7 @@ def precedent_openfile(kz,Nkys=920,path=None):
     #     kappa = np.arange(start,stop,(stop-start)/steps)
     # else:
     print("kz_preopen : {:.4f}".format(kz) )
+    loop = 1
     while True:
         try :
             omega_read = np.genfromtxt(path + "kz={:5.4f}".format(kz) + "_omega_r.txt", delimiter="  ", unpack=False)
@@ -42,7 +43,8 @@ def precedent_openfile(kz,Nkys=920,path=None):
             break
         except :
             print(path + "kz={:5.4f}".format(kz) + "_omega_r.txt")
-            kz = kz + 0.0001
+            kz = kz + 0.0001*loop*(-1)**loop
+            loop = loop+1
             # break
 
     gamma_read = np.genfromtxt(path + "kz={:5.4f}".format(kz) + "_gamma.txt", delimiter="  ", unpack=False)
@@ -102,7 +104,18 @@ def verification_dispersion(kz,density=5e16,unnorm = False,EF=1e4):
     kx = 0.0
 
     kappa = np.arange(0.001,0.2200,0.0002383025027203481)
+    # kymin = 0.001
+    # kymax = 0.22001
+    # pas = 0.0002383025027203481
+    # if kz > 0.0516 :
+    #     kymax = 0.44001
+    #     pas = 0.0002381025027203481
+    # kappa = np.arange(kymin,kymax,pas)
+
     omega,gamma,kz = precedent_openfile(kz,path=path)
+    omega = omega[:len(kappa)]
+    gamma = gamma[:len(kappa)]
+
     # print("kz_opened : {:.4f}".format(kz) )
 
 
