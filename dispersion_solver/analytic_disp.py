@@ -31,7 +31,8 @@ prt=PlasmaParameters(plasmaDensity=plasmaDensity,
 
 
 # kz = np.arange(0.00001,0.0001,0.0000001)/prt.Debye_length*u.m
-ky = np.arange(0.001,0.8,0.001)/prt.Debye_length*u.m
+# ky = np.arange(0.001,0.8,0.001)/prt.Debye_length*u.m
+ky = np.arange(10,8000,10)
 kz = 0.011*np.ones(len(ky))/prt.Debye_length*u.m
 # kz = 6.28/0.0456*np.ones(len(ky))
 v0 = 5e4
@@ -100,7 +101,8 @@ else:
 
 # plt.plot(kz,abs(gamma[:,2]),label='2')
 plt.legend()
-# plt.show()
+plt.show()
+# print("DEBYE", prt.Debye_length)
 
 # print(a.value*omega_r[:,0]**3 + b.value*omega_r[:,0]**2 + c.value*omega_r[:,0] + d.value)
 # print(a.value*omega_r[:,1]**3 + b.value*omega_r[:,1]**2 + c.value*omega_r[:,1] + d.value)
@@ -137,20 +139,19 @@ if verobse: print(1 - omega_pi**2/omega_cpx**2+true_solution_short_1+true_soluti
 if verobse: print(1 - omega_pi**2/omega_cpx**2+appr_solution_short_1+appr_solution_short_2)
 
 ##################################### CHECK WITH A 2D MAP
-
-ky_check = ky[84]/u.m
-kappa = ky
+ky_check = ky[250]/10**0.5/u.m
+kappa = ky/10**0.5
 kz=kz/u.m
-ome = omega_r[84,2]*u.rad/u.s
-gam = gamma[84,2]*u.rad/u.s
+ome = omega_r[250,2]*u.rad/u.s
+gam = gamma[250,2]*u.rad/u.s
 print(ome,gam)
 # ome = ome.real
 # gam = gam.real
 # print(ome,gam)
 # gioco_omega = np.arange(0.9*omega_check,1.1*omega_check,0.0005*prt.ionPlasmaFrequency)
 # gioco_gamma = np.arange(0.9*gamma_check,1.1*gamma_check,0.001*prt.ionPlasmaFrequency)
-gioco_omega = np.arange(0.5*ome/(u.rad/u.s),4.0*ome/(u.rad/u.s),ome/(u.rad/u.s)/50)*u.rad/u.s
-gioco_gamma = np.arange(0.5*gam/(u.rad/u.s),4.0*gam/(u.rad/u.s),gam/(u.rad/u.s)/50)*u.rad/u.s
+gioco_omega = np.arange(0.1*ome/(u.rad/u.s),1.5*ome/(u.rad/u.s),ome/(u.rad/u.s)/50)*u.rad/u.s
+gioco_gamma = np.arange(0.1*gam/(u.rad/u.s),1.5*gam/(u.rad/u.s),gam/(u.rad/u.s)/50)*u.rad/u.s
 
 kyons = [ky_check*prt.Debye_length-0.0001,ky_check*prt.Debye_length+0.0001]/prt.Debye_length
 
@@ -244,6 +245,7 @@ kymax = 0.22
 pas = 0.0002383025027203481
 kappa = np.arange(0.001,0.2200,0.0002383025027203481)
 Nkys = len(kappa)
+print("~~~~~~~~~~~~~~~~~~~~~~~Nkys",Nkys)
 
 densities = [5e16]
 
@@ -278,7 +280,24 @@ plt.plot(ky/3.20,(abs(omega_r[:,2]**2)+abs(gamma[:,2]**2))**0.5,label='sum')
 
 plt.legend()
 # plt.xlim(0,1500)
+
+# use the solution from the solver inside the real equation and the approximated equation
+omega_cpx = np.zeros(len(kz))
+omega_cpx[:len(kz)] = gamma_solver[0,:len(kz)]*1j+omega_solver[0,:len(kz)]
+kz = kz*u.m
+true_solution1 = 1 - omega_pi**2/omega_cpx**2 - (kz**2 * omega_pe**2)/(omega_cpx-ky * v0)**2/k**2 - (ky**2 * omega_pe**2)/((omega_cpx-ky * v0)**2 -omega_ce**2)/k**2
+appr_solution1 = (alpha*omega_cpx**2 + beta * omega_cpx**3 - omega_pi**2)/omega_cpx**2
+
+plt.figure()
+plt.semilogy(ky,abs(true_solution1.real),color='r')
+plt.semilogy(ky,abs(true_solution1.imag),color='b')
 plt.show()
+
+print(true_solution)
+# print(appr_solution)
+# plt.show()
+
+
 
 # print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 # eps = kz**2*omega_pe**2/(k**2 * ky**2 * v0**2)

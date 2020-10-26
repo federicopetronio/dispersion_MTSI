@@ -100,7 +100,7 @@ def verification_dispersion(kz,density=5e16,unnorm = False,EF=1e4):
                         magneticField=0.02*u.T,
                         electricField=EF,
                         ionTemperature=0.5*u.eV)
-
+    # print("prt.Debye_length",prt.Debye_length)
     kx = 0.0
 
     kappa = np.arange(0.001,0.2200,0.0002383025027203481)
@@ -122,7 +122,7 @@ def verification_dispersion(kz,density=5e16,unnorm = False,EF=1e4):
     ky,ome,gam = find_max_gamma(kz,path=path)
 
     ind_ky = list(kappa).index(ky)
-    # ind_ky = int(ind_ky*1.5)
+    ind_ky = int(ind_ky/.5)
     ky = kappa[ind_ky]
     ome = omega[ind_ky]
     gam = gamma[ind_ky]
