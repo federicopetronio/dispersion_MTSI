@@ -37,25 +37,32 @@ if caso == 1:
     ky2 = 0.1554
     kz = 0.0516*2
     gamma_exp = 0.015
-    omega_exp = 0.7624
+    omega_exp = 0.0586
     Lr = 0.64e-2*u.m
-    kz = np.pi/Lr*prt_base.Debye_length
+    kz = np.pi/Lr*prt_base.Debye_length/2
     ky1 = 2*np.pi/L_theta*prt_base.Debye_length
 
 if caso == 2:
     ky1 = 0.1554
     ky2 = 0.1554
-    kz = 0.0516
+    kz = 0.0516/2
     gamma_exp = 0.04
-    omega_exp = 0.644
+    # omega_exp = 0.609
+    omega_exp = 0.36 # only during the growth
     Lr = 1.28e-2*u.m
+    ky1 = 2*np.pi/L_theta*prt_base.Debye_length * 3
+    omega_err = omega_exp/4 /2
 
 if caso == 3:
     ky1 = 0.104
     ky2 = 0.1554
-    kz = 0.0344
+    kz = 0.0344/2
     gamma_exp = 0.064
-    omega_exp = 0.604
+    # omega_exp = 0.4538
+    omega_exp = 0.23 # only during the growth
+    ky1 = 2*np.pi/L_theta*prt_base.Debye_length * 2
+    omega_err = omega_exp /2
+
     Lr = 1.92e-2*u.m
 
 if caso == 4:
@@ -64,7 +71,13 @@ if caso == 4:
     kz = 0.0258
     # kz = 0.0258*3/2
     gamma_exp = 0.16
-    omega_exp = 0.6198
+    # omega_exp = 0.4709
+    Lr = 2.56e-2*u.m
+    omega_exp = 0.48 # only during the growth
+    ky1 = 2*np.pi/L_theta*prt_base.Debye_length * 2
+    kz = 2*np.pi/(2*Lr) * prt_base.Debye_length
+    omega_err = omega_exp/2 /2
+
     Lr = 2.56e-2*u.m
 
 if caso == 5:
@@ -72,36 +85,53 @@ if caso == 5:
     ky2 = 0.1554
     kz = 0.0516*2
     gamma_exp = 0.022
-    omega_exp = 0.6317
+    omega_exp = 0.0902
     Lr = 0.64e-2*u.m
-    kz = np.pi/Lr*prt_base.Debye_length
+    kz = np.pi/Lr*prt_base.Debye_length/2
     ky1 = 2*np.pi/L_theta*prt_base.Debye_length
 
 if caso == 6:
     ky1 = 0.155
     ky2 = 0.2072
-    kz = 0.0516
+    kz = 0.0516/2
     gamma_exp = 0.036
-    omega_exp = 0.584
+    # omega_exp = 0.4778
+    omega_exp = 0.4061 # only during the growth
     Lr = 1.28e-2*u.m
+    ky1 = 2*np.pi/L_theta*prt_base.Debye_length * 3
+    omega_err = omega_exp/3 /2
 
 if caso == 7:
     ky1 = 0.104
     ky2 = 0.1554
-    kz = 0.0344
+    kz = 0.0344/2
     gamma_exp = 0.079
-    omega_exp = 0.402
+    # omega_exp = 0.2958
+    omega_exp = 0.27 # only during the growth
     Lr = 1.92e-2*u.m
+    ky1 = 2*np.pi/L_theta*prt_base.Debye_length * 2
+    omega_err = omega_exp /2
 
 if caso == 8:
     ky1 = 0.104
     ky2 = 0.1554
     kz = 0.0258
     gamma_exp = 0.091
-    omega_exp = 0.3813
+    # omega_exp = 0.34
+    omega_exp = 0.40 # only during the growth
     Lr = 2.56e-2*u.m
+    ky1 = 2*np.pi/L_theta*prt_base.Debye_length * 2
+    kz = 2*np.pi/(2*Lr) * prt_base.Debye_length
+    omega_err = omega_exp/2 /2
 
-kz = kz/2
+if caso == 21:
+    ky1 = 0.104
+    kz = 0.0172
+    gamma_exp = 0.068
+    omega_exp = 0.2457
+    Lr = 3.84e-2*u.m
+
+
 
 if caso == 0:
     # ky1 = 2*np.pi/(0.01*u.m)*prt_AT.Debye_length
@@ -162,6 +192,7 @@ plt.plot(kappa,abs(gamma),color="magenta",label="$\\gamma$")
 plt.plot(ky1,gamma_exp,"v",color="magenta")
 plt.plot(kappa,abs(omega),color='blue',label="$\\omega$")
 plt.plot(ky1,omega_exp,"^",color='blue')
+plt.errorbar(ky1,omega_exp,yerr=omega_err,ecolor = 'blue', zorder = 1, capsize = 2)
 
 plt.legend()
 plt.title("Radial wave number, $k_r\cdot\\lambda_D = ${:.4f}".format(kz))
@@ -176,8 +207,9 @@ print(ky1,prt_base.Debye_length)
 
 # [plt.axvline(x=xfct, linestyle='dashed') for xfct in kys/u.m]
 plt.grid(True)
+plt.tight_layout()
 # plt.savefig(current + "/images_dispersion/" + "{:}_case_JAN.png".format(caso,ky1,kz))
-plt.savefig('/home/petronio/Nextcloud/theseLPP/reports/MTSI/images/'+ "{:}_case_JAN.png".format(caso,ky1,kz))
+# plt.savefig('/home/petronio/Nextcloud/theseLPP/reports_vari/MTSI/images/'+ "{:}_case_JAN.png".format(caso,ky1,kz))
 # plt.savefig(current + "/images_dispersion/" + "{:}_case_ky={:.3f}_kz={:.3f}.png".format(caso,ky1,kz))
 plt.show()
 plt.close()
