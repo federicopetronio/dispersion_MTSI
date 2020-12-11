@@ -7,8 +7,6 @@ from astropy import units as u
 "Normalized permittivity"
 
 
-
-
 def eps_MTSI(omg, kx, ky, kz, prt=PlasmaParameters()):
     """Plamsa permitivity for the MTSI, correspondr to the function to solve to find the dispertion relation
     :param omg: (complex) frequency $\omega$, normalized by the ion plasma frequency

@@ -12,6 +12,8 @@ import rcparams
 import argparse
 
 density = 5e16
+# density = 2e17
+
 L_theta = 1.28e-2*u.m
 prt_base=PlasmaParameters(plasmaDensity=density*u.m**(-3),
                     electronTemperature=10*u.eV,
@@ -62,7 +64,7 @@ gamma_plot = abs(gamma_plot)
 
 index = 334
 print(kzetas[index-5:index+5])
-# index = 30
+index = 30
 
 fig, ax1 = plt.subplots()
 ax2 = ax1.twinx()
@@ -77,7 +79,7 @@ fig.colorbar(im,cax=cax, orientation='horizontal')
 ax2.set_ylabel("$\\gamma/\\omega_{pi}$"+", kz = {:.3f}".format(kzetas[index]),color='red')
 ax2.plot(kappa,gamma_plot[index,:],color='red')
 fig.tight_layout()
-plt.savefig("/home/petronio/Downloads/gamma2D.png")
+# plt.savefig("/home/petronio/Downloads/gamma2D.png")
 
 
 fig, ax1 = plt.subplots()
@@ -93,33 +95,41 @@ fig.colorbar(im,cax=cax, orientation='horizontal')
 ax2.set_ylabel("$\\omega_r/\\omega_{pi}$"+", kz = {:.3f}".format(kzetas[index]),color='red')
 ax2.plot(kappa,omega_plot[index,:],color='red')
 fig.tight_layout()
-plt.savefig("/home/petronio/Downloads/omega2D.png")
+# plt.savefig("/home/petronio/Downloads/omega2D.png")
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+secondary_axis = False #set to True to plot two examples of DR over the map
+
 fig, axes = plt.subplots(nrows=1, ncols=2, sharex=False, sharey=False)
-cmap = "viridis"
+cmap = "viridis_r"
+cmap = "plasma_r"
+
 fig.set_figheight(4.1)
-fig.set_figwidth(10.5)
+fig.set_figwidth(8.5)
 
 color1="red"
 ax1 = axes[0]
-ax2 = ax1.twinx()
-ax2.tick_params(colors=color1)
 
 
-ax1.set_xlabel("Azimuthal wave number, $k_{\\theta} \cdot \\lambda_D$")
-ax1.set_ylabel("Radial wave number, $k_{r} \cdot \\lambda_D$")
-im = ax1.pcolor(kappa,kz_plot,gamma_plot[:,:],cmap=cmap)
+# ax1.set_xlabel("Azimuthal wave number, $k_{\\theta} \cdot \\lambda_D$")
+# ax1.set_ylabel("Radial wave number, $k_{r} \cdot \\lambda_D$")
+ax1.set_xlabel("Azimuthal wave number, $\~{k}_{\\theta}$")
+ax1.set_ylabel("Radial wave number, $\~{k}_{r}$")
+im = ax1.pcolor(kappa,kz_plot,gamma_plot[:,:],cmap=cmap,vmin=0,vmax=1)
 
-cax = fig.add_axes([0.12, 0.9, 0.13, 0.05])
+cax = fig.add_axes([0.15, 0.825, 0.13, 0.05])
+fig.text(0.15+0.13/2,0.9,"$\~{\\gamma}$")
 # cax = fig.add_axes([0.37, 0.9, 0.3, 0.05])
 
 cbar = fig.colorbar(im,cax=cax, orientation='horizontal')
-cbar.set_ticks([0,0.5])
+cbar.set_ticks([0,0.5,1])
 
-ax2.set_ylabel("$\\gamma/\\omega_{pi}$"+", for $k_r \cdot \\lambda_D$ = {:.3f}".format(kzetas[index]),color=color1)
-ax2.plot(kappa,gamma_plot[index,:],color=color1)
+if secondary_axis:
+    ax2 = ax1.twinx()
+    ax2.tick_params(colors=color1)
+    ax2.set_ylabel("$\\gamma/\\omega_{pi}$"+", for $k_r \cdot \\lambda_D$ = {:.3f}".format(kzetas[index]),color=color1)
+    ax2.plot(kappa,gamma_plot[index,:],color=color1)
 # fig.tight_layout()
 
 
@@ -127,26 +137,29 @@ ax2.plot(kappa,gamma_plot[index,:],color=color1)
 color2 = "blue"
 ax3 = axes[1]
 
-ax4 = ax3.twinx()
-ax4.tick_params(colors=color2)
 # ax4.major_ticklabels.set_color(color2)
 
-ax3.set_xlabel("Azimuthal wave number, $k_{\\theta} \cdot \\lambda_D$")
-ax3.set_ylabel("Radial wave number, $k_{r} \cdot \\lambda_D$")
-im = ax3.pcolor(kappa,kz_plot,omega_plot[:,:],cmap=cmap)
+ax3.set_xlabel("Azimuthal wave number, $\~{k}_{\\theta}$")
+ax3.set_ylabel("Radial wave number, $\~{k}_{r}$")
+im = ax3.pcolor(kappa,kz_plot,omega_plot[:,:],cmap=cmap,vmin=0,vmax=2)
 
-cax = fig.add_axes([0.62, 0.9, 0.13, 0.05])
-
+cax = fig.add_axes([0.65, 0.825, 0.13, 0.05])
+fig.text(0.65+0.13/2,0.9,"$\~{\\omega}_r$")
 
 cbar = fig.colorbar(im,cax=cax, orientation='horizontal')
-cbar.set_ticks([0,0.5,1])
+cbar.set_ticks([0,1,2])
 
-ax4.set_ylabel("$\\omega_r/\\omega_{pi}$"+", for $k_r \cdot \\lambda_D$ = {:.3f}".format(kzetas[index]),color=color2)
-ax4.plot(kappa,omega_plot[index,:],color=color2)
+# cbar.solids.set_edgecolor("face")
+if secondary_axis:
+    ax4 = ax3.twinx()
+    ax4.tick_params(colors=color2)
+    ax4.set_ylabel("$\\omega_r/\\omega_{pi}$"+", for $k_r \cdot \\lambda_D$ = {:.3f}".format(kzetas[index]),color=color2)
+    ax4.plot(kappa,omega_plot[index,:],color=color2)
 fig.tight_layout()
 
 
 plt.tight_layout()
-plt.savefig("/home/petronio/Downloads/gamma_omega2D.png")
+# plt.savefig('/home/petronio/Nextcloud/theseLPP/reports_vari/MTSI_paper/paper/images/gamma_omega2D.png',dpi=300)
+
 plt.show()
 plt.close()

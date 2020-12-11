@@ -11,7 +11,7 @@ import os
 
 def open_disp_file(kz, path = None):
     if path == None:
-        path = '/home/petronio/Nextcloud/theseLPP/runs/runs_benchmark/MTSI/dispersion_MTSI/dispersion_solver/dispersion_data/general_results/'
+        path = '/home/petronio/Nextcloud/theseLPP/code/dispersion_MTSI/dispersion_solver/dispersion_data/change_n/5e+16'
     kymin = 0.001
     kymax = 0.20
     pas = 0.00023803827751196175
@@ -24,16 +24,11 @@ def open_disp_file(kz, path = None):
     return kappa,omega,gamma
 
 def precedent_openfile(kz,Nkys=920,path=None):
+    """Open a file already calculated for gamma and omega"""
     if path == None:
-        path = '/home/petronio/Nextcloud/theseLPP/runs/runs_benchmark/MTSI/dispersion_MTSI/dispersion_solver/dispersion_data/general_results/'
+        path = '/home/petronio/Nextcloud/theseLPP/code/dispersion_MTSI/dispersion_solver/dispersion_data/change_n/5e+16'
 
-    # kappa = np.genfromtxt(path + "ky.txt", delimiter="  ")
-    # if kz < 0.0099:
-    #     start = 0.001
-    #     stop = 0.1
-    #     steps = 500
-    #     kappa = np.arange(start,stop,(stop-start)/steps)
-    # else:
+
     print("kz_preopen : {:.4f}".format(kz) )
     loop = 1
     while True:
@@ -45,11 +40,9 @@ def precedent_openfile(kz,Nkys=920,path=None):
             print(path + "kz={:5.4f}".format(kz) + "_omega_r.txt")
             kz = kz + 0.0001*loop*(-1)**loop
             loop = loop+1
-            # break
 
     gamma_read = np.genfromtxt(path + "kz={:5.4f}".format(kz) + "_gamma.txt", delimiter="  ", unpack=False)
 
-    # print("Len",len(omega_read))
 
     if kz > 0.0516 :
         Nkys = 1844
@@ -64,8 +57,9 @@ def precedent_openfile(kz,Nkys=920,path=None):
 
 
 def find_max_gamma(kz,path=None):
+    """find the ky, for a give kz, of the maximal gamma"""
     if path == None:
-        path = '/home/petronio/Nextcloud/theseLPP/runs/runs_benchmark/MTSI/dispersion_MTSI/dispersion_solver/dispersion_data/general_results/'
+        path = '/home/petronio/Nextcloud/theseLPP/code/dispersion_MTSI/dispersion_solver/dispersion_data/change_n/5e+16'
 
     omega,gamma,kz = precedent_openfile(kz,path=path)
     max_ind = np.argmax(gamma)
@@ -83,6 +77,7 @@ def find_max_gamma(kz,path=None):
 
 
 def verification_dispersion(kz,density=5e16,unnorm = False,EF=1e4):
+    """Check that the solution of the solver converged towards a good value"""
     from util.parameters import PlasmaParameters
     from astropy.constants import m_e, m_p
     from astropy import units as u
@@ -122,7 +117,7 @@ def verification_dispersion(kz,density=5e16,unnorm = False,EF=1e4):
     ky,ome,gam = find_max_gamma(kz,path=path)
 
     ind_ky = list(kappa).index(ky)
-    ind_ky = int(ind_ky/.5)
+    ind_ky = int(ind_ky)
     ky = kappa[ind_ky]
     ome = omega[ind_ky]
     gam = gamma[ind_ky]

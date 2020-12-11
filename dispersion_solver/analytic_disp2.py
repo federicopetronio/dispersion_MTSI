@@ -16,6 +16,9 @@ import rcparams
 verobse =  False
 unnorm = True
 
+"""SOLVE THE APPROX SOLUTION"""
+
+
 import cubic_solver
 plasmaDensity=5e16*u.m**-3
 prt=PlasmaParameters(plasmaDensity=plasmaDensity,

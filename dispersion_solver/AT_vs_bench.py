@@ -23,7 +23,7 @@ from astropy.constants import m_e, m_p
 me = m_e.value
 mi = 131*m_p.value
 
-# "PROBLEM IN OPENING THE FILES WHERE THE KY ARE NOT EXACTLY THE ONES EXPECTED"
+"""COMPARE ANTOINE SOLUTION WITH THE ONE IN THE BENCHMARK"""
 #~~~~~~~~~~~~~~~~~~~~~~
 
 from util.parameters import PlasmaParameters

@@ -1,9 +1,7 @@
 from astropy import units as u
 from plasmapy.formulary.parameters import plasma_frequency, Debye_length
-
 import directsolver
 import os
-
 from functools import partial
 from importlib import reload
 
@@ -25,6 +23,8 @@ me = m_e.value
 mi = 131*m_p.value
 
 # "PROBLEM IN OPENING THE FILES WHERE THE KY ARE NOT EXACTLY THE ONES EXPECTED"
+"""USE THE SOLVER WITH A DIFFERENT DENSITY"""
+
 #~~~~~~~~~~~~~~~~~~~~~~
 
 from util.parameters import PlasmaParameters
@@ -51,13 +51,8 @@ except:
     print("already existing folder dispersion_data/change_n/{:}/".format(plasmaDensity*u.m**(3)))
 
 
-# path = sentierino + "/dispersion_data/all_data/"
 path2 = sentierino + "/dispersion_data/change_n/{:}/".format(plasmaDensity*u.m**(3))
 
-# path = "/home/petronio/Nextcloud/theseLPP/runs/runs_benchmark/MTSI/dispersion_MTSI/dispersion_solver/dispersion_data/"
-print(path2)
-
-kx = 0.0
 prt=PlasmaParameters(plasmaDensity=plasmaDensity,
                      electronTemperature=10*u.eV,
                      magneticField=0.02*u.T,

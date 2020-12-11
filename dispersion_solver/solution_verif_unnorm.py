@@ -87,8 +87,6 @@ plt.tight_layout()
 
 plt.grid(True)
 currentdir = os.getcwd()
-plt.savefig(currentdir + "/images_dispersion/" + "invariance_density.png")
-# plt.savefig('/home/petronio/Nextcloud/theseLPP/reports/MTSI/images/'+ 'invariance_density.png')
 
 plt.show()
 plt.close()

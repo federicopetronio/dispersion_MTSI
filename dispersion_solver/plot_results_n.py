@@ -78,7 +78,7 @@ fig = plt.figure(figsize=(6,5))
 plt.grid()
 
 path1 = sentierino + "/dispersion_data/change_n/{:}/".format(density)
-# path1 = sentierino + "/dispersion_data/change_n_E/30000.0_2e+17/"
+# path1 = sentierino + "/dispersion_data/change_E_Field/30000.0/"
 
 print(path1)
 
@@ -115,8 +115,8 @@ if denormalize :
     ky1=ky1/prt_base.Debye_length*u.m
     plt.plot(kys_denorm[:],abs(gamma1[:]),label = "$\gamma$")
     plt.plot(kys_denorm[:],abs(omega1[:]),label = "$\omega_r$")
-    plt.plot(kys_denorm[:],abs(omega1[:]+1j*gamma1),label = "abs_value$")
-    plt.plot(kys_denorm[:],kys_denorm[:]*50000,color="blue",label = "ky*ub")
+    # plt.plot(kys_denorm[:],abs(omega1[:]+1j*gamma1),label = "abs_value$")
+    # plt.plot(kys_denorm[:],kys_denorm[:]*50000,color="blue",label = "ky*ub")
     print("{:e},{:e}".format(np.amax(omega1),gamma1[np.argmax(omega1)]))
 
 
@@ -125,7 +125,7 @@ plt.title("Radial normalized wave number, $k_r = {:.4f}$".format(kz))
 plt.xlabel("Azimuthal wave number, $k_{\\theta}$")
 plt.ylabel("($\omega$, $\gamma$) / $\omega_{pi}$")
 # plt.axvline(x = 1*ktheta0*u.m, linestyle='dashed', label="1 period theta")
-[plt.axvline(x=xfct, linestyle=(3,(3,6)),color="tab:red") for xfct in [ky1,ky1*2,ky1*3]]
+[plt.axvline(x=xfct, linestyle=(3,(3,6)),color="tab:red") for xfct in [ky1,ky1*2,ky1*3,ky1*4]]
 # plt.axhline(y=gamma_pic, linestyle=(3,(3,6)),color="tab:blue",label="$\\gamma$ pic")
 # plt.axhline(y=omega_pic, linestyle=(3,(3,6)),color="tab:green",label="$\\omega$ pic")
 
@@ -136,8 +136,8 @@ plt.ylabel("($\omega$, $\gamma$) / $\omega_{pi}$")
 plt.legend()
 plt.grid(color='gray', linestyle='dotted')
 plt.tight_layout()
-# plt.savefig(sentierino   + "/images_keep/dispersion_kz={:.0f}_Lr={:.0f}_Lt={:.0f}.png".format(kz*1000,Lr*10000/u.m,L_theta*10000/u.m))
+# plt.savefig(sentierino   + "/images_keep/dispersion_kz={:.0f}_Lr={:.0f}_Lt={:.0f}.png".format(kz*1000*u.m,Lr*10000/u.m,L_theta*10000/u.m))
 # plt.savefig('/home/petronio/Nextcloud/theseLPP/reports/MTSI/images/'+ 'strongerE.png')
-plt.savefig('/home/petronio/Downloads/comparsion_with_v.png')
+# plt.savefig('/home/petronio/Downloads/comparsion_with_v.png')
 plt.show()
 plt.close()

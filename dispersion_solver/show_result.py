@@ -39,7 +39,7 @@ prt_base=PlasmaParameters(plasmaDensity=density*u.m**(-3),
                     ionTemperature=0.5*u.eV)
 
 kz = np.pi/Lr*prt_base.Debye_length
-kz = 2*np.pi/Lr*prt_base.Debye_length
+# kz = 2*np.pi/Lr*prt_base.Debye_length
 
 ky1 = 2*np.pi/Lt*prt_base.Debye_length
 
@@ -67,23 +67,23 @@ gamma = gammax[:len(kappa)]
 omega = omegax[:len(kappa)]
 
 plt.figure(figsize=(5,4))
-plt.plot(kappa,abs(gamma),color="magenta",label="$\\gamma$")
+plt.plot(kappa,abs(gamma),color="red",label="$\\gamma$")
 plt.plot(kappa,abs(omega),color='blue',label="$\\omega$")
 
 plt.legend()
-plt.title("Radial wave number, $k_r\cdot\\lambda_D = ${:.4f}".format(kz) + ", Lr = {:.2f}".format(Lr*100))
-plt.xlabel("Azimuthal wave number, $k_{\\theta} \cdot \\lambda_D$")
+plt.title("$k_r\cdot\\lambda_D = ${:.4f}".format(kz) + ", Lr = {:.2f} cm".format(Lr*100/u.m))
+plt.xlabel("$k_{\\theta} \cdot \\lambda_D$")
 plt.ylabel("$(\\gamma, \\omega_r) / \\omega_{pi}$ ")
 
-[plt.axvline(x=xfct, linestyle=(3,(3,6)),color="tab:red") for xfct in [ky1,ky1*2,ky1*3]]
+# [plt.axvline(x=xfct, linestyle=(3,(3,6)),color="tab:red") for xfct in [ky1,ky1*2,ky1*3]]
 [plt.axvline(x=xfct, linestyle=(3,(3,6)),color="tab:red") for xfct in [ky1,ky1*2,ky1*3,ky1*4]]
 
-# [plt.axvline(x=xfct, linestyle=(3,(3,6)),color="tab:red") for xfct in [ky1,ky1*2]]
-# [plt.axvline(x=xfct, linestyle=(3,(3,6)),color="tab:red") for xfct in [ky1]]
+[plt.axvline(x=xfct, linestyle=(3,(3,6)),color="black") for xfct in [ky1*2]]
+[plt.axvline(x=xfct, linestyle=(3,(3,5,1,5)),color="black") for xfct in [ky1]]
 
 # plt.plot(ky1,gamma_exp,"v",color="magenta")
 # plt.plot(ky1,omega_exp,"^",color='blue')
-plt.errorbar(ky1,omega_exp,yerr=omega_err,ecolor = 'blue', zorder = 1, capsize = 2)
+# plt.errorbar(ky1,omega_exp,yerr=omega_err,ecolor = 'blue', zorder = 1, capsize = 2)
 
 
 

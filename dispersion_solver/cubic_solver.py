@@ -1,6 +1,6 @@
 import numpy as np
 
-
+"""TO USE WITH THE ANALITIC APPROX DISPERSION"""
 def cubic_solver(a,b,c,d):
 
     solution = np.zeros(3, dtype=complex)

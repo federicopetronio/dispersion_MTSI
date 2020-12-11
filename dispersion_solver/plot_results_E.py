@@ -52,10 +52,11 @@ kys = np.arange(kymin,kymax,pas)
 
 kz = 0.0344
 fig = plt.figure(figsize=(6,5))
-plt.title("kz={:5.4f}".format(kz))
-plt.grid()
+plt.title("$k_r\cdot \\lambda_D$ = {:5.4f}".format(kz))
+plt.grid(False)
 
-E_field = [10000.0,15000.0,20000.0]
+E_field = [10000.0,15000.0,20000.0,30000.0]
+colors = ["black","red","blue","green"]
 
 for ind,den in enumerate(E_field):
     path = sentierino + "/dispersion_data/change_E_Field/{:}/".format(den)
@@ -64,9 +65,9 @@ for ind,den in enumerate(E_field):
 
     # plt.plot(kysref1, dispersion[i,1,:], "green", label="$\omega_r$ solver")
     # plt.plot(kysref1, dispersion[i,2,:], "magenta", label="$\gamma$ solver")
-    plt.plot(kys,abs(gamma1),label = "E = {:.0f}".format(den/1000)+" kV/m")
-    plt.xlabel("Azimuthal wave number $k_{\\theta}\cdot \\lambda_{De}$")
-    plt.ylabel("Pulsations  $\\gamma/\\omega_{pi} $")
+    plt.plot(kys,abs(gamma1),label = "E = {:.0f}".format(den/1000)+" kV/m",color=colors[ind])
+    plt.xlabel("$k_{\\theta}\cdot \\lambda_{De}$")
+    plt.ylabel("$\\gamma/\\omega_{pi} $")
     print("okkkk")
     # plt.tight_layout()
 
@@ -75,7 +76,7 @@ for ind,den in enumerate(E_field):
 plt.legend()
 plt.tight_layout()
 # plt.savefig(sentierino   + "/images_dispersion/dispersion_kz={:5.4f}_gamma_E.png".format(kz))
-plt.savefig('/home/petronio/Nextcloud/theseLPP/reports/MTSI/images/'+ 'differentE.png')
+# plt.savefig('/home/petronio/Nextcloud/theseLPP/reports/MTSI/images/'+ 'differentE.png')
 
 plt.show()
 plt.close()

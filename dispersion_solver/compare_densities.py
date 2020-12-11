@@ -28,7 +28,7 @@ from astropy.constants import m_e, m_p
 me = m_e.value
 mi = 131*m_p.value
 
-# "PROBLEM IN OPENING THE FILES WHERE THE KY ARE NOT EXACTLY THE ONES EXPECTED"
+"""COMPARE TWO DR DENORMALIZED (DIFFERENT DENSITY)"""
 #~~~~~~~~~~~~~~~~~~~~~~
 
 from util.parameters import PlasmaParameters
@@ -107,11 +107,10 @@ omega2, gamma2, kz = precedent_openfile(kz2,Nkys,path2)
 omega2 = omega2*prt2.ionPlasmaFrequency
 gamma2 = gamma2*prt2.ionPlasmaFrequency
 kys_denorm2 = kys/prt2.Debye_length
-    # plt.plot(kys_denorm[:-5],abs(gamma1[:-5]),label = libello[ind])
-# plt.plot(kys_denorm1[:],abs(omega1[:]),color = "red",label = "$\\omega$, n = {:}".format(density1))
-# plt.plot(kys_denorm1[:],abs(gamma1[:]),"-.",color = "red",label = "$\\gamma$")
+plt.plot(kys_denorm1[:],abs(omega1[:]),color = "red",label = "$\\omega$, n = {:}".format(density1))
+plt.plot(kys_denorm1[:],abs(gamma1[:]),color = "red",label = "$\\gamma$")
 
-plt.plot(kys_denorm2[:],abs(omega2[:]),color = "red",label = "$\\omega$ n = {:}".format(density2))
+plt.plot(kys_denorm2[:],abs(omega2[:]),"-.",color = "red",label = "$\\omega$ n = {:}".format(density2))
 plt.plot(kys_denorm2[:],abs(gamma2[:]),"-.",color = "blue",label = "$\\gamma$")
 
 

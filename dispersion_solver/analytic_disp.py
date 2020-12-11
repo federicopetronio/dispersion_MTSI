@@ -13,8 +13,9 @@ from astropy import units as u
 import os
 import rcparams
 
-
 import cubic_solver
+
+"""SOLVE THE APPROX SOLUTION"""
 
 verobse =  False
 unnorm = True

@@ -21,13 +21,10 @@ import numpy as np
 from astropy.constants import m_e, m_p
 me = m_e.value
 mi = 131*m_p.value
-
-#~~~~~~~~~~~~~~~~~~~~~~
-
 from util.parameters import PlasmaParameters
 
-#~~~~~~~~~~~~~~~~~~~~~~
-from datetime import date, datetime
+"""CALCULATE 2D MAPS FOR PARTIALLY VARYING DENSITY"""
+
 
 sentierino = os.getcwd()
 while True:

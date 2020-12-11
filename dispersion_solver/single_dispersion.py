@@ -12,10 +12,7 @@ import rcparams
 
 import argparse
 
-# parser = argparse.ArgumentParser()
-# parser.add_argument('--caso',   help='1,2,3,4,5,6,7,8')
-# case = parser.parse_args()#
-# caso = int(case.caso)
+""" TRACE THE DR WITH IN IMPUT THE DIMENSIONS IN CM"""
 
 Lr = float(sys.argv[1])*0.01*u.m
 L_theta = float(sys.argv[2])*0.01*u.m

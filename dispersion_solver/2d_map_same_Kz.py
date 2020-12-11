@@ -9,6 +9,8 @@ from astropy import units as u
 from functools import partial
 import os
 
+"""Verify the solution with different densities for the same kz """
+
 kz = 0.0370/u.m
 density = 2e17
 # max_pos = verification_dispersion(kz, density=density,unnorm=True)
@@ -35,7 +37,7 @@ Lt=0.0128*u.m
 kz = 2*np.pi/Lt
 
 densities = [5e16,1e17,2e17,3e17]
-densities = [5e16,7e16,9e16,11e16]
+# densities = [5e16,7e16,9e16,11e16]
 # densities = [2e17,5e16]
 
 kappa = np.ones((len(densities),Nkys))
@@ -64,7 +66,7 @@ for index,dindondensity in enumerate(densities):
     kx = 0.0
 
     if primo:
-        primo = False
+        # primo = False
         kappa = np.arange(0.001,0.2200,0.0002383025027203481)
         omega,gamma,kz = precedent_openfile(kz_z,path=path)
 
